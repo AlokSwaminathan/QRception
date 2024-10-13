@@ -8,7 +8,7 @@ BUILDDIR := build
 
 BUILD_SCRIPT := merge_asm.py
 ELF_TEMPLATE := elf_template.asm
-ENTRYPOINT := start
+ENTRYPOINT := main
 
 SRCS := $(shell find $(SRCDIR) -name '*.c')
 
