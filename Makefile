@@ -23,6 +23,7 @@ $(TARGET) : $(SRCASMS)
 		--elf-template $(ELF_TEMPLATE)\
 		--output $(FULL_ELF_ASM)
 	nasm -f bin -o $(TARGET) $(FULL_ELF_ASM)
+	chmod +x $(TARGET)
 
 
 $(BUILDDIR)/%.s : $(SRCDIR)/%.c
