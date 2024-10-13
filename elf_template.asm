@@ -73,8 +73,8 @@ _start:
   lea rsi, [rsp + 8]
   lea rdx, [rsp + 8*(rdi + 1)]
   call entry_point
+  mov rdi, rax
   mov rax, 60
-  mov rdi, 0
   syscall
 
 file_end:
