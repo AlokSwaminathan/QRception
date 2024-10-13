@@ -115,6 +115,7 @@ def rename_symbols(name: str, text: str) -> str:
 
 
 GCC_USELESS_START_RE = r"^((?:\t\.\w+.*\n)*)"
+GCC_USELESS_END_RE = r"\t\.ident.*\n\t\.section.*$"
 GCC_USELESS_SECTION_RE = r"(.*LFE(.|\n)+?\n)((\w+:)|$)"
 GCC_USELESS_INFO_RE = r"((?:\t\.text\n)?\t\.globl\t\w+\n(?:.|\n)+?\n)\w+:"
 GCC_USELESS_LABEL_RE = r".*LFB\d+:\n"
@@ -126,6 +127,10 @@ def relevant_asm(text: str) -> str:
     useless_starts = re.findall(GCC_USELESS_START_RE, text)
     for start in useless_starts:
         text = text.replace(start, "")
+
+    useless_ends = re.findall(GCC_USELESS_END_RE, text)
+    for end in useless_ends:
+        text = text.replace(end, "")
 
     useless_sections = re.findall(GCC_USELESS_SECTION_RE, text)
     for section in useless_sections:
@@ -209,7 +214,6 @@ def write_external_asm(template_elf_asm: str, external_asm: str, output_file: st
 def main():
     file_data, entrypoint, template_elf_asm, output_file = parse_args()
     merged_asm = merge_asm(file_data, entrypoint)
-    # merged_asm = patch_exit(merged_asm, entrypoint)
     template_elf_asm = rename_entrypoint(template_elf_asm, entrypoint)
     write_external_asm(template_elf_asm, merged_asm, output_file)
 
