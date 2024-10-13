@@ -85,6 +85,7 @@ RENAME_LIST = [
     (".string", "db"),
     (".value", "dd"),
     ("OFFSET FLAT:", ""),
+    ('"', "`"),
 ]
 
 
