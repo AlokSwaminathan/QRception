@@ -1,7 +1,7 @@
 .DEFAULT_GOAL := all
 
 CC := gcc
-CFLAGS := -Wall -Wextra -masm=intel
+CFLAGS := -Wall -Wextra -masm=intel -Os
 
 SRCDIR := src
 BUILDDIR := build
