@@ -1,0 +1,5 @@
+build/
+*.s
+*.o
+*.out
+qr_generator
