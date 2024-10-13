@@ -26,7 +26,7 @@ dw 0x3e
 ; Additional ELF version stuff. Leave as 1.
 dd 1
 ; Entry point address.
-dq entry_point + file_load_va
+dq _start + file_load_va
 ; Program header offset. We'll put it immediately after the ELF header.
 dq program_headers_start
 ; Section header offset. We'll put it after the program headers.
@@ -66,5 +66,15 @@ dq file_end
 dq file_end
 ; The alignment of the segment
 dq 0x200000
+
+; function that prepares arguments for entrypoint and exits after done
+_start:
+  mov rdi, [rsp]
+  lea rsi, [rsp + 8]
+  lea rdx, [rsp + 8*(rdi + 1)]
+  call entry_point
+  mov rax, 60
+  mov rdi, 0
+  syscall
 
 file_end:

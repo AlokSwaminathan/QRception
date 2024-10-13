@@ -194,31 +194,6 @@ def rename_entrypoint(template_elf_asm: str, entrypoint: str) -> str:
     return template_elf_asm.replace("entry_point", entrypoint)
 
 
-ENTRYPOINT_RE_END = r":\n((?:.|\n)*?)" + " " * TAB_LENGTH + "ret\n"
-EXIT_INSTRUCTIONS = ["mov rax, 60", "mov rdi, 0", "syscall"]
-EXIT_ASM = ""
-for ei in EXIT_INSTRUCTIONS:
-    EXIT_ASM += " " * TAB_LENGTH
-    EXIT_ASM += ei
-    EXIT_ASM += "\n"
-
-
-def patch_exit(merged_asm: str, entrypoint: str) -> str:
-    entrypoint_re = f"{entrypoint}{ENTRYPOINT_RE_END}"
-    entrypoint_match = re.findall(entrypoint_re, merged_asm)[0]
-    if entrypoint_match == None:
-        print(entrypoint_match)
-        print(entrypoint_re)
-        print(merged_asm)
-        print("No ret in entrypoint, bad")
-        sys.exit(1)
-    entrypoint_asm = entrypoint_match
-    new_entrypoint = f"{entrypoint_asm}{EXIT_ASM}\n"
-    return merged_asm.replace(
-        f"{entrypoint_asm}{' ' * TAB_LENGTH}ret\n", new_entrypoint
-    )
-
-
 ELF_ASM_ENDING = "file_end:"
 
 
@@ -233,10 +208,9 @@ def write_external_asm(template_elf_asm: str, external_asm: str, output_file: st
 def main():
     file_data, entrypoint, template_elf_asm, output_file = parse_args()
     merged_asm = merge_asm(file_data, entrypoint)
-    merged_asm = patch_exit(merged_asm, entrypoint)
+    # merged_asm = patch_exit(merged_asm, entrypoint)
     template_elf_asm = rename_entrypoint(template_elf_asm, entrypoint)
     write_external_asm(template_elf_asm, merged_asm, output_file)
-    sys.exit(1)
 
 
 if __name__ == "__main__":
