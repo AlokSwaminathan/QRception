@@ -71,7 +71,7 @@ dq 0x200000
 _start:
   mov rdi, [rsp]
   lea rsi, [rsp + 8]
-  lea rdx, [rsp + 8*(rdi + 1)]
+  lea rdx, [rsp + 8*(rdi + 2)]
   call entry_point
   mov rdi, rax
   mov rax, 60
