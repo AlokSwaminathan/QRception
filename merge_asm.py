@@ -74,7 +74,7 @@ def get_symbols(text: str) -> List[Tuple[str, str]]:
 GCC_STANDARD_SYMBOL_RE = r"(\.L\w+):\n"
 GCC_WORD_RE = r"(\w+) PTR"
 GCC_FUNC_CALL_RE = r"(.+)@PLT\n"
-GCC_RIP_RE = r"(\w+)\[rip\]"
+GCC_RIP_RE = r"(\s\w+)\[rip\]"
 
 RENAME_LIST = [
     (".byte", "db"),
@@ -85,6 +85,9 @@ RENAME_LIST = [
     (".string", "db"),
     (".value", "dd"),
     ("OFFSET FLAT:", ""),
+    ("movabs", "mov"),
+    ("rip", "rel"),
+    ("\tcall\t__stack_chk_fail\n", ""),
     ('"', "`"),
 ]
 
