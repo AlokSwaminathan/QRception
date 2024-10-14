@@ -23,6 +23,10 @@
 #define MODE_INDICATOR_LEN_BITS (4)
 #define DISTINCT_CHARACTER_COUNT_SIZES (3)
 
+// 1000 should be more than enough and not a memory issue on modern systems
+// Heap allocation is too much code size overhead
+#define MAX_MODE_SEGMENTS (1000)
+
 extern const int NUMERIC_CHARACTER_COUNT_LEN[3];
 extern const int ALPHANUMERIC_CHARACTER_COUNT_LEN[3];
 extern const int BYTE_CHARACTER_COUNT_LEN[3];

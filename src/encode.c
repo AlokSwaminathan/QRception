@@ -28,8 +28,7 @@ void get_mode_specific_size(long *sizes, enum Mode mode, long len) {
   }
 }
 
-enum SwitchMode should_switch(enum Mode curr_mode, enum Mode new_mode, int match_streak,
-                              int miss_streak) {
+enum SwitchMode should_switch(enum Mode curr_mode, enum Mode new_mode, int match_streak, int miss_streak) {
   if (new_mode > curr_mode) {
     bool promote = false;
     if (curr_mode == NUM && new_mode == BYTE)
@@ -53,8 +52,7 @@ enum SwitchMode should_switch(enum Mode curr_mode, enum Mode new_mode, int match
 enum Mode get_mode(unsigned char c) {
   if (c >= 0x30 && c <= 0x39)
     return NUM;
-  else if (c == 0x20 || c == 0x24 || c == 0x25 || c == 0x2a || c == 0x2b ||
-           (c >= 0x2d && c <= 0x2f) || c == 0x3a || (c >= 0x41 && c <= 0x5a))
+  else if (c == 0x20 || c == 0x24 || c == 0x25 || c == 0x2a || c == 0x2b || (c >= 0x2d && c <= 0x2f) || c == 0x3a || (c >= 0x41 && c <= 0x5a))
     return ALPH_NUM;
   else
     return BYTE;
@@ -64,7 +62,8 @@ enum Mode get_mode(unsigned char c) {
 // 0 - Versions 1-9
 // 1 - Versions 10-26
 // 2 - Versions 27-40
-void calculate_total_size(long *sizes, byte *msg, long len) {
+// Returns number of segments
+long calculate_total_size_and_get_switches(long *sizes, byte *msg, long len, struct ModeSegment *segments) {
   sizes[0] = 0;
   sizes[1] = 0;
   sizes[2] = 0;
@@ -73,6 +72,7 @@ void calculate_total_size(long *sizes, byte *msg, long len) {
   enum Mode curr_mode = get_mode(*curr);
   int match_streak = 1;
   int miss_streak = 0;
+  int switches = 0;
   for (int i = 1; i < len; i++) {
     enum Mode mode = get_mode(msg[i]);
     if (mode == curr_mode) {
@@ -87,6 +87,12 @@ void calculate_total_size(long *sizes, byte *msg, long len) {
         for (int j = 0; j < DISTINCT_CHARACTER_COUNT_SIZES; j++) {
           sizes[j] += old_sizes[j];
         }
+        segments[switches] = (struct ModeSegment){
+            .mode = curr_mode,
+            .start = i - miss_streak - match_streak,
+            .end = i - miss_streak
+        };
+        switches++;
         curr_mode = mode;
         match_streak = miss_streak;
         miss_streak = 0;
@@ -105,4 +111,5 @@ void calculate_total_size(long *sizes, byte *msg, long len) {
   for (int i = 0; i < DISTINCT_CHARACTER_COUNT_SIZES; i++) {
     sizes[i] += old_sizes[i];
   }
+  return switches;
 }

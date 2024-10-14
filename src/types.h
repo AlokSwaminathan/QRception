@@ -13,6 +13,12 @@ enum SwitchMode {
   DEMOTE = 2,
 };
 
+struct ModeSegment {
+  long start;
+  long end;
+  enum Mode mode;
+};
+
 typedef unsigned char byte;
 
 #define bool _Bool
