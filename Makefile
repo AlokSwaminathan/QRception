@@ -1,7 +1,7 @@
 .DEFAULT_GOAL := all
 
 CC := gcc
-CFLAGS := -Wall -Wextra -masm=intel -Os
+CFLAGS := -Wall -Wextra -masm=intel -Os -fno-builtin -nostdlib -nostartfiles -fno-stack-protector
 
 SRCDIR := src
 BUILDDIR := build
