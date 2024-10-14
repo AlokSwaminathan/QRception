@@ -74,7 +74,7 @@ def get_symbols(text: str) -> List[Tuple[str, str]]:
 GCC_STANDARD_SYMBOL_RE = r"(\.L\w+):\n"
 GCC_WORD_RE = r"(\w+) PTR"
 GCC_FUNC_CALL_RE = r"(.+)@PLT\n"
-GCC_RIP_RE = r"(\s\w+)\[rip\]"
+GCC_RIP_RE = r"(\s(\w|\.)+)\[rip\]"
 
 RENAME_LIST = [
     (".byte", "db"),
@@ -109,7 +109,8 @@ def rename_symbols(name: str, text: str) -> str:
 
     gcc_rips = re.findall(GCC_RIP_RE, text)
     for rip in gcc_rips:
-        text = text.replace(f"{rip}[rip]", f"[rel {rip}]")
+        rip = rip[0]
+        text = text.replace(f"{rip}[rip]", f"\t[rel {rip}]")
 
     for original, new in RENAME_LIST:
         text = text.replace(original, new)
@@ -119,7 +120,8 @@ def rename_symbols(name: str, text: str) -> str:
 
 GCC_USELESS_START_RE = r"^((?:\t\.\w+.*\n)*)"
 GCC_USELESS_END_RE = r"\t\.ident.*\n\t\.section.*$"
-GCC_USELESS_SECTION_RE = r"(.*LFE(.|\n)+?\n)((\w+:)|$)"
+GCC_USELESS_SECTION_RE = r"(.*LFE(.|\n)+?\n)(((\w|\.)+:)|$)"
+GCC_USELESS_SECTION_LINE_RE = r"\.section.*"
 GCC_USELESS_INFO_RE = r"((?:\t\.text\n)?\t\.globl\t\w+\n(?:.|\n)+?\n)\w+:"
 GCC_USELESS_LABEL_RE = r".*LFB\d+:\n"
 GCC_USELESS_INSTRUCTIONS_RE = r"\t\.cfi.*\n"
@@ -138,6 +140,10 @@ def relevant_asm(text: str) -> str:
     useless_sections = re.findall(GCC_USELESS_SECTION_RE, text)
     for section in useless_sections:
         text = text.replace(section[0], "")
+
+    useless_sections = re.findall(GCC_USELESS_SECTION_LINE_RE, text)
+    for section in useless_sections:
+        text = text.replace(section, "")
 
     useless_info = re.findall(GCC_USELESS_INFO_RE, text)
     for info in useless_info:
