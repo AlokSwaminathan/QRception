@@ -2,7 +2,7 @@
 
 CC := gcc
 CFLAGS := -Wall -Wextra -masm=intel -Oz -fno-builtin -nostdlib -nostartfiles -fno-stack-protector
-DBG_CFLAGS := -Wall -Wextra -Og -g
+DBG_CFLAGS := -Wall -Wextra -O0 -g
 
 SRCDIR := src
 BUILDDIR := build
