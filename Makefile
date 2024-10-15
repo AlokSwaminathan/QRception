@@ -12,7 +12,8 @@ BUILD_SCRIPT := merge_asm.py
 ELF_TEMPLATE := elf_template.asm
 ENTRYPOINT := main
 
-SRCS := $(shell find $(SRCDIR) -name '*.c')
+# SRCS := $(shell find $(SRCDIR) -name '*.c')
+SRCS := $(SRCDIR)/main.c
 
 SRCASMS := $(patsubst $(SRCDIR)/%.c, $(BUILDDIR)/%.s, $(SRCS))
 DBGOBJS := $(patsubst $(SRCDIR)/%.c, $(DBGDIR)/%.o, $(SRCS))
