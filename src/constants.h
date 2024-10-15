@@ -49,4 +49,6 @@ extern const uint8_t NUMERIC_CHARACTER_COUNT_LEN[3];
 extern const uint8_t ALPHANUMERIC_CHARACTER_COUNT_LEN[3];
 extern const uint8_t BYTE_CHARACTER_COUNT_LEN[3];
 
+extern const uint8_t MAX_DATA_BITS[40][4];
+
 #endif

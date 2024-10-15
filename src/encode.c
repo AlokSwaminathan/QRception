@@ -169,7 +169,7 @@ uint16_t encode_numeric(byte *data, uint16_t data_len, byte *codewords, uint16_t
 // Returns number of bytes written (last byte padded to 0)
 // Version should be 1-3 in this case, representing a character count version
 // Returns number of bytes written
-uint16_t encode_into_codewords(byte *data, uint16_t data_len, byte *codewords, struct ModeSegment *segments, uint16_t segments_len, byte cc_version) {
+uint16_t encode_into_codewords(byte *data, uint16_t data_len, byte *codewords, struct ModeSegment *segments, uint16_t segments_len, enum CharCountVersion cc_version) {
   // Current bit of codewords
   uint16_t curr_bit = 0;
   struct ModeSegment seg;

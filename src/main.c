@@ -1,6 +1,13 @@
+// Looks like including the .c file directly so gcc can make one .S file is more effective than merging separate ones
+// merge_asm still works even though it isnt merging anything anymore
 #include "constants.h"
+#include "constants.c"
 #include "func_table.h"
 #include "types.h"
+#include "bits.c"
+#include "encode.c"
+#include "mode.c"
+#include "version.c"
 #include <asm/unistd_64.h>
 
 long printnum(long num);
@@ -8,8 +15,8 @@ int main(int argc, char **argv, char **envp) {
   if (argc < 2)
     return 1;
   byte *qr_data = (byte *)argv[1];
-  uint32_t len = 0;
   byte *curr = qr_data;
+  uint32_t len = 0;
   while (*(curr++) != '\0')
     len++;
   
@@ -21,8 +28,15 @@ int main(int argc, char **argv, char **envp) {
   struct ModeSegment segments[MAX_MODE_SEGMENTS];
   uint16_t segments_len = calculate_total_size_and_get_switches(sizes, qr_data, len, segments);
 
+  enum ErrorCorrectionVersion err = EC_LOW;
+
+  struct Version version = get_smallest_version(sizes,err) ;
+  if (version.version == 255) {
+    return 1;
+  }
+
   byte codewords[MAX_CODEWORDS];
-  len = encode_into_codewords(qr_data, len, codewords, segments, segments_len,0);
+  len = encode_into_codewords(qr_data, len, codewords, segments, segments_len, version.cc_version);
 
   syscall3(__NR_write,1,(long) codewords,len);
   // Get type of data
