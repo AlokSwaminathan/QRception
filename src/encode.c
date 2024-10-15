@@ -49,21 +49,12 @@ enum SwitchMode should_switch(enum Mode curr_mode, enum Mode new_mode, uint16_t 
   return demote ? DEMOTE : NO_SWITCH;
 }
 
-enum Mode get_mode(byte c) {
-  if (c >= 0x30 && c <= 0x39)
-    return NUM;
-  else if (c == 0x20 || c == 0x24 || c == 0x25 || c == 0x2a || c == 0x2b || (c >= 0x2d && c <= 0x2f) || c == 0x3a || (c >= 0x41 && c <= 0x5a))
-    return ALPH_NUM;
-  else
-    return BYTE;
-}
-
 // Expects sizes to be long[3] with the sizes depending on QR version
 // 0 - Versions 1-9
 // 1 - Versions 10-26
 // 2 - Versions 27-40
 // Returns number of segments
-long calculate_total_size_and_get_switches(uint16_t *sizes, byte *data, uint16_t len, struct ModeSegment *segments) {
+uint16_t calculate_total_size_and_get_switches(uint16_t *sizes, byte *data, uint16_t len, struct ModeSegment *segments) {
   sizes[0] = 0;
   sizes[1] = 0;
   sizes[2] = 0;
@@ -110,42 +101,106 @@ long calculate_total_size_and_get_switches(uint16_t *sizes, byte *data, uint16_t
   for (uint16_t i = 0; i < DISTINCT_CHARACTER_COUNT_SIZES; i++) {
     sizes[i] += old_sizes[i];
   }
+  segments[switches] = (struct ModeSegment){
+    .mode = curr_mode,
+    .len = match_streak
+  };
+  switches++;
   return switches;
 }
 
 // Returns number of bits written
-long encode_bytes(byte *data, uint16_t data_len, byte *codewords, uint16_t curr_bit, byte cc_version) {
-     
+uint16_t encode_bytes(byte *data, uint16_t data_len, byte *codewords, uint16_t curr_bit) {
+  for (uint16_t i = 0; i < data_len; i++){
+    curr_bit += write_bits(codewords, curr_bit, (uint32_t) data[i], BYTE_LEN_BITS); 
+  }
+  return curr_bit;
 }
 
 // Returns number of bits written
-long encode_alphanumeric(byte *data, uint16_t data_len, byte *codewords, uint16_t curr_bit, byte cc_version) {
-  
+uint16_t encode_alphanumeric(byte *data, uint16_t data_len, byte *codewords, uint16_t curr_bit) {
+  uint32_t alph_data;
+  for (uint16_t i = 0; i < data_len - 2; i += 2){
+    alph_data = 45*ascii_to_alphanumeric(data[i]);
+    alph_data += ascii_to_alphanumeric(data[i+1]);
+    curr_bit += write_bits(codewords, curr_bit, alph_data, ALPHANUMERIC_TWO_LEN_BITS);
+  }
+  if (data_len % 2 == 1){
+    alph_data = ascii_to_alphanumeric(data[data_len - 1]);
+    curr_bit += write_bits(codewords, curr_bit, alph_data, ALPHANUMERIC_ONE_LEN_BITS);
+  } else{
+    alph_data = 45*ascii_to_alphanumeric(data[data_len - 2]);
+    alph_data += ascii_to_alphanumeric(data[data_len - 1]);
+    curr_bit += write_bits(codewords, curr_bit, alph_data, ALPHANUMERIC_TWO_LEN_BITS);
+  }
+  return curr_bit;
 }
 
 // Returns number of bits written
-long encode_numeric(byte *data, uint16_t data_len, byte *codewords, uint16_t curr_bit, byte cc_version) {
-  long num = MODE_INDICATOR_LEN_BITS;
+uint16_t encode_numeric(byte *data, uint16_t data_len, byte *codewords, uint16_t curr_bit) {
+  uint32_t numeric_data;
+  for (uint16_t i = 0; i < data_len - 3; i+= 3){
+    numeric_data = 100*(data[i] - '0');
+    numeric_data += 10*(data[i+1] - '0');
+    numeric_data += data[i+2] - '0';
+    curr_bit += write_bits(codewords, curr_bit, numeric_data, NUMERIC_THREE_LEN_BITS);
+  }
+  switch (data_len % 3) {
+  case 0:
+    numeric_data = 100*(data[data_len - 3] - '0');
+    numeric_data += 10*(data[data_len - 2] - '0');
+    numeric_data += data[data_len - 1] - '0';
+    curr_bit += write_bits(codewords, curr_bit, numeric_data, NUMERIC_THREE_LEN_BITS);
+  break;
+  case 1:
+    numeric_data = data[data_len-1] - '0';
+    curr_bit += write_bits(codewords, curr_bit, numeric_data, NUMERIC_ONE_LEN_BITS);
+  break;
+  case 2:
+    numeric_data = data[data_len-1] - '0';
+    numeric_data += 10*(data[data_len-2] - '0');
+    curr_bit += write_bits(codewords, curr_bit, numeric_data, NUMERIC_TWO_LEN_BITS);
+  break;
+  }
+  return curr_bit;
 }
 
 // Expects codewords to be len 2956
 // Returns number of bytes written (last byte padded to 0)
 // Version should be 1-3 in this case, representing a character count version
-long encode_into_codewords(byte *data, uint16_t data_len, byte *codewords, struct ModeSegment *segments, uint16_t segment_len, byte cc_version) {
+// Returns number of bytes written
+uint16_t encode_into_codewords(byte *data, uint16_t data_len, byte *codewords, struct ModeSegment *segments, uint16_t segments_len, byte cc_version) {
   // Current bit of codewords
-  long curr = 0;
-  for (long i = 0; i < segment_len; i++){
-    struct ModeSegment seg = segments[i];
+  uint16_t curr_bit = 0;
+  struct ModeSegment seg;
+  // Character count and mode indicator data
+  uint8_t cc_len_bits;
+  uint8_t mode_indicator;
+  ModeEncoder encoder;
+  for (uint16_t i = 0; i < segments_len; i++){
+    seg = segments[i]; 
     switch (seg.mode) {
     case NUM:
-      curr += encode_numeric(data, seg.len, codewords, curr, cc_version);
+      encoder = encode_numeric;
+      mode_indicator = NUMERIC_MODE_INDICATOR;
+      cc_len_bits = NUMERIC_CHARACTER_COUNT_LEN[cc_version];
     break;
     case ALPH_NUM:
-      curr += encode_alphanumeric(data, seg.len, codewords, curr, cc_version);
+      encoder = encode_alphanumeric;
+      mode_indicator = ALPHANUMERIC_MODE_INDICATOR;
+      cc_len_bits = ALPHANUMERIC_CHARACTER_COUNT_LEN[cc_version];
     break;
     case BYTE:
-      curr += encode_bytes(data, seg.len, codewords, curr, cc_version);
+      encoder = encode_bytes;
+      mode_indicator = BYTE_MODE_INDICATOR;
+      cc_len_bits = BYTE_CHARACTER_COUNT_LEN[cc_version];
     break;
     }
+    curr_bit += write_bits(codewords, curr_bit, (uint32_t) mode_indicator, MODE_INDICATOR_LEN_BITS);
+    curr_bit += write_bits(codewords, curr_bit, (uint32_t) seg.len, cc_len_bits);
+    curr_bit += encoder(data, seg.len, codewords, curr_bit);
+    data += seg.len;
   }
+  curr_bit += write_bits(codewords, curr_bit,0, sizeof(byte));
+  return curr_bit / 8;
 }

@@ -23,4 +23,6 @@ struct ModeSegment {
 
 typedef uint8_t byte;
 
+typedef uint16_t (*ModeEncoder)(byte*, uint16_t, byte*, uint16_t);
+
 #endif

@@ -20,7 +20,11 @@ int main(int argc, char **argv, char **envp) {
   uint16_t sizes[3];
   struct ModeSegment segments[MAX_MODE_SEGMENTS];
   uint16_t segments_len = calculate_total_size_and_get_switches(sizes, qr_data, len, segments);
-  
+
+  byte codewords[MAX_CODEWORDS];
+  len = encode_into_codewords(qr_data, len, codewords, segments, segments_len,0);
+
+  syscall3(__NR_write,1,(long) codewords,len);
   // Get type of data
   // Select smallest qr code version
   // Generate error correction data
