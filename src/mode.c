@@ -6,29 +6,38 @@ byte ascii_to_alphanumeric(byte c) {
     return c - '0';
   else if (c >= 0x41 && c <= 0x5a)
     return c + 10 - 'A';
-  byte ret = 35;
   switch (c) {
   case ':':
-    ret++;
+    return 44;
+    break;
   case '/':
-    ret++;
+    return 43;
+    break;
   case '.':
-    ret++;
+    return 42;
+    break;
   case '-':
-    ret++;
+    return 41;
+    break;
   case '+':
-    ret++;
+    return 40;
+    break;
   case '*':
-    ret++;
+    return 39;
+    break;
   case '%':
-    ret++;
+    return 38;
+    break;
   case '$':
-    ret++;
+    return 37;
+    break;
   case ' ':
-    ret++;
+    return 36;
+    break;
+  default:
+    return 35;
     break;
   }
-  return ret;
 }
 
 enum Mode get_mode(byte c) {
