@@ -75,7 +75,6 @@ GCC_STANDARD_SYMBOL_RE = r"(\.L\w+):\n"
 GCC_WORD_RE = r"(\w+) PTR"
 GCC_FUNC_CALL_RE = r"(.+)@PLT\n"
 GCC_RIP_RE = r"(\s(\w|\.)+)\[rip\]"
-GCC_ALIGN_RE = r"(\t\.align (\d+))"
 GCC_SHR_RE = r"(\tshr\t\w+\n)"
 
 RENAME_LIST = [
@@ -86,12 +85,13 @@ RENAME_LIST = [
     (".zero", "resb"),
     (".string", "db"),
     (".ascii", "db"),
-    (".value", "dd"),
+    (".value", "dw"),
     ("OFFSET FLAT:", ""),
     ("movabs", "mov"),
     ("rip", "rel"),
     ("\tcall\t__stack_chk_fail\n", ""),
     ("\t.text\n", ""),
+    (".align", "align"),
     ('"', "`"),
 ]
 
@@ -116,12 +116,6 @@ def rename_symbols(name: str, text: str) -> str:
         rip = rip[0]
         text = text.replace(f"{rip}[rip]", f"\t[rel {rip}]")
 
-    gcc_aligns = re.findall(GCC_ALIGN_RE, text)
-    for align in gcc_aligns:
-        num = int(align[1])
-        align = align[0]
-        text = text.replace(align, f"\talign {2**num}")
-
     gcc_shrs = re.findall(GCC_SHR_RE, text)
     for shr in gcc_shrs:
         text = text.replace(shr, f"{shr[:-1]}, 1\n")
@@ -140,6 +134,7 @@ GCC_USELESS_INFO_RE = r"((?:\t\.text\n)?\t\.globl\t\w+\n(?:.|\n)+?\n)\w+:"
 GCC_USELESS_LABEL_RE = r".*LFB\d+:\n"
 GCC_USELESS_INSTRUCTIONS_RE = r"\t\.cfi.*\n"
 GCC_COMMENTS_RE = r"#.*\n"
+GCC_SECTION_TYPE_RE = r"\s\.(?:(?:type)|(?:size))\s\w+,.*\n"
 
 
 def relevant_asm(text: str) -> str:
@@ -174,6 +169,10 @@ def relevant_asm(text: str) -> str:
     instructions = re.findall(GCC_USELESS_INSTRUCTIONS_RE, text)
     for instruction in instructions:
         text = text.replace(instruction, "")
+
+    labels = re.findall(GCC_SECTION_TYPE_RE, text)
+    for label in labels:
+        text = text.replace(label, "")
 
     return text
 
