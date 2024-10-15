@@ -1,6 +1,9 @@
 #ifndef TYPES
 #define TYPES
 
+#include <stdint.h>
+#include <stdbool.h>
+
 enum Mode {
   NUM = 0,
   ALPH_NUM = 1,
@@ -14,15 +17,10 @@ enum SwitchMode {
 };
 
 struct ModeSegment {
-  long start;
-  long end;
+  uint16_t len;
   enum Mode mode;
 };
 
-typedef unsigned char byte;
-
-#define bool _Bool
-#define false (0)
-#define true (1)
+typedef uint8_t byte;
 
 #endif

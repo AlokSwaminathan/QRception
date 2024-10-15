@@ -6,9 +6,9 @@
 // 0 - Versions 1-9
 // 1 - Versions 10-26
 // 2 - Versions 27-40
-void get_mode_specific_size(long *sizes, enum Mode mode, long len) {
-  const int *character_counts;
-  long base_size = MODE_INDICATOR_LEN_BITS;
+void get_mode_specific_size(uint16_t *sizes, enum Mode mode, uint16_t len) {
+  const uint8_t *character_counts;
+  uint16_t base_size = MODE_INDICATOR_LEN_BITS;
   switch (mode) {
   case NUM:
     character_counts = NUMERIC_CHARACTER_COUNT_LEN;
@@ -23,12 +23,12 @@ void get_mode_specific_size(long *sizes, enum Mode mode, long len) {
     base_size += 8 * len;
     break;
   }
-  for (int i = 0; i < DISTINCT_CHARACTER_COUNT_SIZES; i++) {
+  for (uint8_t i = 0; i < DISTINCT_CHARACTER_COUNT_SIZES; i++) {
     sizes[i] = base_size + character_counts[i];
   }
 }
 
-enum SwitchMode should_switch(enum Mode curr_mode, enum Mode new_mode, int match_streak, int miss_streak) {
+enum SwitchMode should_switch(enum Mode curr_mode, enum Mode new_mode, uint16_t match_streak, uint16_t miss_streak) {
   if (new_mode > curr_mode) {
     bool promote = false;
     if (curr_mode == NUM && new_mode == BYTE)
@@ -49,7 +49,7 @@ enum SwitchMode should_switch(enum Mode curr_mode, enum Mode new_mode, int match
   return demote ? DEMOTE : NO_SWITCH;
 }
 
-enum Mode get_mode(unsigned char c) {
+enum Mode get_mode(byte c) {
   if (c >= 0x30 && c <= 0x39)
     return NUM;
   else if (c == 0x20 || c == 0x24 || c == 0x25 || c == 0x2a || c == 0x2b || (c >= 0x2d && c <= 0x2f) || c == 0x3a || (c >= 0x41 && c <= 0x5a))
@@ -63,18 +63,18 @@ enum Mode get_mode(unsigned char c) {
 // 1 - Versions 10-26
 // 2 - Versions 27-40
 // Returns number of segments
-long calculate_total_size_and_get_switches(long *sizes, byte *msg, long len, struct ModeSegment *segments) {
+long calculate_total_size_and_get_switches(uint16_t *sizes, byte *data, uint16_t len, struct ModeSegment *segments) {
   sizes[0] = 0;
   sizes[1] = 0;
   sizes[2] = 0;
-  long old_sizes[3];
-  byte *curr = msg;
+  uint16_t old_sizes[3];
+  byte *curr = data;
   enum Mode curr_mode = get_mode(*curr);
-  int match_streak = 1;
-  int miss_streak = 0;
-  int switches = 0;
-  for (int i = 1; i < len; i++) {
-    enum Mode mode = get_mode(msg[i]);
+  uint16_t match_streak = 1;
+  uint16_t miss_streak = 0;
+  uint16_t switches = 0;
+  for (uint16_t i = 1; i < len; i++) {
+    enum Mode mode = get_mode(data[i]);
     if (mode == curr_mode) {
       match_streak += miss_streak + 1;
       miss_streak = 0;
@@ -89,8 +89,7 @@ long calculate_total_size_and_get_switches(long *sizes, byte *msg, long len, str
         }
         segments[switches] = (struct ModeSegment){
             .mode = curr_mode,
-            .start = i - miss_streak - match_streak,
-            .end = i - miss_streak
+            .len = match_streak
         };
         switches++;
         curr_mode = mode;
@@ -108,8 +107,45 @@ long calculate_total_size_and_get_switches(long *sizes, byte *msg, long len, str
     }
   }
   get_mode_specific_size(old_sizes, curr_mode, match_streak);
-  for (int i = 0; i < DISTINCT_CHARACTER_COUNT_SIZES; i++) {
+  for (uint16_t i = 0; i < DISTINCT_CHARACTER_COUNT_SIZES; i++) {
     sizes[i] += old_sizes[i];
   }
   return switches;
+}
+
+// Returns number of bits written
+long encode_bytes(byte *data, uint16_t data_len, byte *codewords, uint16_t curr_bit, byte cc_version) {
+     
+}
+
+// Returns number of bits written
+long encode_alphanumeric(byte *data, uint16_t data_len, byte *codewords, uint16_t curr_bit, byte cc_version) {
+  
+}
+
+// Returns number of bits written
+long encode_numeric(byte *data, uint16_t data_len, byte *codewords, uint16_t curr_bit, byte cc_version) {
+  long num = MODE_INDICATOR_LEN_BITS;
+}
+
+// Expects codewords to be len 2956
+// Returns number of bytes written (last byte padded to 0)
+// Version should be 1-3 in this case, representing a character count version
+long encode_into_codewords(byte *data, uint16_t data_len, byte *codewords, struct ModeSegment *segments, uint16_t segment_len, byte cc_version) {
+  // Current bit of codewords
+  long curr = 0;
+  for (long i = 0; i < segment_len; i++){
+    struct ModeSegment seg = segments[i];
+    switch (seg.mode) {
+    case NUM:
+      curr += encode_numeric(data, seg.len, codewords, curr, cc_version);
+    break;
+    case ALPH_NUM:
+      curr += encode_alphanumeric(data, seg.len, codewords, curr, cc_version);
+    break;
+    case BYTE:
+      curr += encode_bytes(data, seg.len, codewords, curr, cc_version);
+    break;
+    }
+  }
 }

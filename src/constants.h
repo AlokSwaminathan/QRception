@@ -27,8 +27,8 @@
 // Heap allocation is too much code size overhead
 #define MAX_MODE_SEGMENTS (1000)
 
-extern const int NUMERIC_CHARACTER_COUNT_LEN[3];
-extern const int ALPHANUMERIC_CHARACTER_COUNT_LEN[3];
-extern const int BYTE_CHARACTER_COUNT_LEN[3];
+extern const uint8_t NUMERIC_CHARACTER_COUNT_LEN[3];
+extern const uint8_t ALPHANUMERIC_CHARACTER_COUNT_LEN[3];
+extern const uint8_t BYTE_CHARACTER_COUNT_LEN[3];
 
 #endif

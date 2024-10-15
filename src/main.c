@@ -8,17 +8,19 @@ int main(int argc, char **argv, char **envp) {
   if (argc < 2)
     return 1;
   byte *qr_data = (byte *)argv[1];
-  long len = 0;
+  uint32_t len = 0;
   byte *curr = qr_data;
   while (*(curr++) != '\0')
     len++;
-
-  long sizes[3];
-  calculate_total_size(sizes, qr_data, len);
-
-  for (long unsigned int i = 0; i < DISTINCT_CHARACTER_COUNT_SIZES; i++) {
-    printnum(sizes[i]);
+  
+  if (len > UINT16_MAX){
+    return 1;
   }
+
+  uint16_t sizes[3];
+  struct ModeSegment segments[MAX_MODE_SEGMENTS];
+  uint16_t segments_len = calculate_total_size_and_get_switches(sizes, qr_data, len, segments);
+  
   // Get type of data
   // Select smallest qr code version
   // Generate error correction data
