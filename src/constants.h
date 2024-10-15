@@ -1,6 +1,8 @@
 #ifndef CONSTANTS
 #define CONSTANTS
 
+#include "types.h"
+
 // For simplicity this is calculated assuming max amount of bits for character count and mode
 // indicator
 //
@@ -26,6 +28,13 @@
 // 1000 should be more than enough and not a memory issue on modern systems
 // Heap allocation is too much code size overhead
 #define MAX_MODE_SEGMENTS (1000)
+
+// From QR Spec (2956) with some extra bytes since the bit insertion might write over
+#define MAX_CODEWORDS (2956+10)
+
+#define NUMERIC_MODE_INDICATOR (0b0001)
+#define ALPHANUMERIC_MODE_INDICATOR (0b0010)
+#define BYTE_MODE_INDICATOR (0b0100)
 
 extern const uint8_t NUMERIC_CHARACTER_COUNT_LEN[3];
 extern const uint8_t ALPHANUMERIC_CHARACTER_COUNT_LEN[3];
