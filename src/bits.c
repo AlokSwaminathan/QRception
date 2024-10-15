@@ -12,8 +12,9 @@ static inline uint32_t reverse_bits(uint32_t data) {
 // Writes data in big endian, so MSB comes before LSB (This is just easier for me to think about)
 // Bytes are also big endian individually
 // Will always write <bit> bits
-// Offset should be 0-7
-void write_bits(byte *arr, byte offset, uint32_t data, byte bits){
+void write_bits(byte *arr, uint16_t curr_bit, uint32_t data, byte bits){
+  arr += curr_bit / 8;
+  byte offset = curr_bit % 8;
   byte existing_data = arr[0] & ((1 << offset) - 1);
 
   data &= (1 << bits) - 1;
