@@ -52,4 +52,7 @@ extern const uint8_t BYTE_CHARACTER_COUNT_LEN[3];
 extern const uint8_t MAX_DATA_BITS[40][5];
 extern const uint8_t ERR_CODEWORD_BLOCKS[40][4];
 
+#define GALOIS_PRIME_POLYNOMIAL (0b11101)
+#define MAX_ERROR_CODEWORDS (30)
+
 #endif
