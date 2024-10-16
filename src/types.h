@@ -42,6 +42,16 @@ struct ModeSegment {
   enum Mode mode;
 };
 
+struct ErrBlock {
+  uint8_t data_len;
+  uint8_t err_len;
+};
+
+struct ErrData {
+  uint8_t block_lens[2];
+  struct ErrBlock blocks[2];
+};
+
 typedef uint8_t byte;
 
 typedef uint16_t (*ModeEncoder)(byte*, uint16_t, byte*, uint16_t);
