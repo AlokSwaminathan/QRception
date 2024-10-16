@@ -133,7 +133,7 @@ GCC_USELESS_SECTION_LINE_RE = r"\.section.*"
 GCC_USELESS_INFO_RE = r"((?:\t\.text\n)?\t\.globl\t\w+\n(?:.|\n)+?\n)\w+:"
 GCC_USELESS_LABEL_RE = r".*LFB\d+:\n"
 GCC_USELESS_INSTRUCTIONS_RE = r"\t\.cfi.*\n"
-GCC_COMMENTS_RE = r"#.*\n"
+GCC_COMMENTS_RE = r"\n#.*"
 GCC_SECTION_TYPE_RE = r"\s\.(?:(?:type)|(?:size))\s\w+,.*\n"
 
 
