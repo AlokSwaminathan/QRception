@@ -32,7 +32,9 @@ enum ErrorCorrectionVersion {
 struct Version {
   uint8_t version;
   enum CharCountVersion cc_version;
-  uint16_t capacity_bits;
+  enum ErrorCorrectionVersion ec_version;
+  uint16_t capacity;
+  uint16_t cw_capacity;
 };
 
 struct ModeSegment {
