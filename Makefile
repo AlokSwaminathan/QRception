@@ -12,7 +12,7 @@ BUILD_SCRIPT := merge_asm.py
 ELF_TEMPLATE := elf_template.asm
 ENTRYPOINT := main
 
-# SRCS := $(shell find $(SRCDIR) -name '*.c')
+WATCHED_FILES := $(shell find $(SRCDIR) -name '*.c')
 SRCS := $(SRCDIR)/main.c
 
 SRCASMS := $(patsubst $(SRCDIR)/%.c, $(BUILDDIR)/%.s, $(SRCS))
@@ -31,7 +31,7 @@ $(TARGET) : $(SRCASMS)
 	chmod +x $(TARGET)
 	@echo "Binary has size $$(stat -c %s $(TARGET)) bytes"
 
-$(BUILDDIR)/%.s : $(SRCDIR)/%.c
+$(BUILDDIR)/%.s : $(SRCDIR)/%.c $(WATCHED_FILES)
 	@mkdir -p $(BUILDDIR)
 	$(CC) $(CFLAGS) -S $< -o $@
 
@@ -39,7 +39,7 @@ $(DBG_TARGET) : $(DBGOBJS)
 	@mkdir -p $(DBGDIR)
 	$(CC) $(DBGOBJS) -o $@
 
-$(DBGDIR)/%.o : $(SRCDIR)/%.c
+$(DBGDIR)/%.o : $(SRCDIR)/%.c $(WATCHED_FILES)
 	@mkdir -p $(DBGDIR)
 	$(CC) $(DBG_CFLAGS) -c $< -o $@
 
