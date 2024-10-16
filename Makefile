@@ -20,16 +20,21 @@ DBGOBJS := $(patsubst $(SRCDIR)/%.c, $(DBGDIR)/%.o, $(SRCS))
 
 TARGET := qr_generator
 DBG_TARGET := $(DBGDIR)/$(TARGET)
+TARGET_OBJ := $(BUILDDIR)/$(TARGET).o
 FULL_ELF_ASM := $(BUILDDIR)/$(TARGET).asm
 
-$(TARGET) : $(SRCASMS)
+$(FULL_ELF_ASM) : $(SRCASMS)
 	python3 $(BUILD_SCRIPT) $(SRCASMS)\
 		--entrypoint $(ENTRYPOINT)\
 		--elf-template $(ELF_TEMPLATE)\
 		--output $(FULL_ELF_ASM)
+
+$(TARGET) : $(FULL_ELF_ASM)
 	nasm -f bin -o $(TARGET) $(FULL_ELF_ASM)
 	chmod +x $(TARGET)
-	@echo "Binary has size $$(stat -c %s $(TARGET)) bytes"
+
+$(TARGET_OBJ) : $(FULL_ELF_ASM)
+	nasm -f elf64 -o $(TARGET_OBJ) $(FULL_ELF_ASM)
 
 $(BUILDDIR)/%.s : $(SRCDIR)/%.c $(WATCHED_FILES)
 	@mkdir -p $(BUILDDIR)
@@ -43,11 +48,17 @@ $(DBGDIR)/%.o : $(SRCDIR)/%.c $(WATCHED_FILES)
 	@mkdir -p $(DBGDIR)
 	$(CC) $(DBG_CFLAGS) -c $< -o $@
 
-all: debug final
+all: debug final symbol_sizes size
 
 debug: $(DBG_TARGET)
 
 final: $(TARGET)
+
+symbol_sizes: $(TARGET_OBJ) $(TARGET)
+	@python3 symbol_size.py "$$(nm -n $(TARGET_OBJ))" --file-size $$(stat -c %s $(TARGET))
+
+size: $(TARGET)
+	@echo "Binary has size $$(stat -c %s $(TARGET)) bytes"
 
 clean:
 	rm -rf build/
