@@ -49,10 +49,11 @@ enum SwitchMode should_switch(enum Mode curr_mode, enum Mode new_mode, uint16_t 
   return demote ? DEMOTE : NO_SWITCH;
 }
 
-// Expects sizes to be long[3] with the sizes depending on QR version
+// Expects sizes to be uint16_t[3] with the sizes depending on QR version
 // 0 - Versions 1-9
 // 1 - Versions 10-26
 // 2 - Versions 27-40
+// Writes in bytes
 // Returns number of segments
 uint16_t calculate_total_size_and_get_switches(uint16_t *sizes, byte *data, uint16_t len, struct ModeSegment *segments) {
   sizes[0] = 0;
@@ -100,6 +101,7 @@ uint16_t calculate_total_size_and_get_switches(uint16_t *sizes, byte *data, uint
   get_mode_specific_size(old_sizes, curr_mode, match_streak);
   for (uint16_t i = 0; i < DISTINCT_CHARACTER_COUNT_SIZES; i++) {
     sizes[i] += old_sizes[i];
+    sizes[i] /= 8;
   }
   segments[switches] = (struct ModeSegment){
     .mode = curr_mode,
