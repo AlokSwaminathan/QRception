@@ -8,34 +8,24 @@ void write_err_block(uint8_t* data, uint8_t data_len, uint8_t* err_codewords, ui
 }
 
 struct ErrData get_err_data(struct Version version) {
-  uint16_t total_cw = ERR_CODEWORD_BLOCKS[version.version][version.ec_version];
+  uint16_t total_block_cw = ERR_CODEWORD_BLOCKS[version.version][version.ec_version];
+
+  uint8_t block1_groups = (version.cw_capacity / total_block_cw) - (version.cw_capacity % total_block_cw);
+  uint8_t block2_groups = (version.cw_capacity % total_block_cw);
   
-  struct ErrData res = {0};
-  if (version.cw_capacity % total_cw == 0){
-    res.block_lens[0] = version.cw_capacity / total_cw;
-    res.blocks[0].data_len = version.capacity / res.block_lens[0];
-    res.blocks[0].err_len = (version.cw_capacity - version.capacity) / res.block_lens[0];
-    return res;
+  if (block2_groups > 0 && block1_groups > total_block_cw + 1) {
+    block1_groups -= total_block_cw + 1;
+    block2_groups -= total_block_cw;
   }
 
-  uint16_t num2 = total_cw + 1;
+  uint8_t data1_len = (version.capacity - block2_groups) / (block1_groups + block2_groups);
+  uint8_t data2_len = data1_len + 1;
 
-  for (uint8_t i = 0; i < version.cw_capacity / total_cw; i++){
-    if ((version.cw_capacity - (i * total_cw)) % num2 == 0){
-      res.block_lens[0] = i;
-      res.block_lens[1] = (version.cw_capacity - (i * total_cw)) / num2;
-      break;
-    }
-  }
+  uint8_t err_len = total_block_cw - data1_len;
 
-  // a = version.capacity
-  // c = res.block_lens[0]
-  // d = res.block_lens[1]
-  uint8_t data_cw_lower = (version.capacity - res.block_lens[1]) / (res.block_lens[0] + res.block_lens[1]);
-  res.blocks[0].data_len = data_cw_lower;
-  res.blocks[1].data_len = data_cw_lower + 1;
-  res.blocks[0].err_len = total_cw - data_cw_lower;
-  res.blocks[1].err_len = total_cw - data_cw_lower;
-
-  return res;
+  return (struct ErrData) {
+    .block_lens = {block1_groups, block2_groups},
+    .data_lens = {data1_len, data2_len},
+    .err_len = err_len,
+  };
 }
