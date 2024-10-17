@@ -109,7 +109,7 @@ uint16_t calculate_total_size_and_get_switches(uint16_t *sizes, byte *data, uint
   return switches;
 }
 
-// Returns number of bits written
+// Returns new curr bit
 uint16_t encode_bytes(byte *data, uint16_t data_len, byte *codewords, uint16_t curr_bit) {
   for (uint16_t i = 0; i < data_len; i++){
     curr_bit += write_bits(codewords, curr_bit, (uint32_t) data[i], BYTE_LEN_BITS); 
@@ -117,7 +117,7 @@ uint16_t encode_bytes(byte *data, uint16_t data_len, byte *codewords, uint16_t c
   return curr_bit;
 }
 
-// Returns number of bits written
+// Returns new curr bit
 uint16_t encode_alphanumeric(byte *data, uint16_t data_len, byte *codewords, uint16_t curr_bit) {
   uint32_t alph_data;
   for (uint16_t i = 0; i < data_len - 2; i += 2){
@@ -136,10 +136,10 @@ uint16_t encode_alphanumeric(byte *data, uint16_t data_len, byte *codewords, uin
   return curr_bit;
 }
 
-// Returns number of bits written
+// Returns new curr bit
 uint16_t encode_numeric(byte *data, uint16_t data_len, byte *codewords, uint16_t curr_bit) {
   uint16_t numeric_data = 0;
-  uint16_t bits = NUMERIC_ONE_LEN_BITS;
+  uint8_t bits = NUMERIC_ONE_LEN_BITS;
   for (uint16_t i = 0; i < data_len; i++){
     numeric_data = (numeric_data * 10) + (data[i] - '0');
     if (bits == NUMERIC_THREE_LEN_BITS) {
@@ -189,10 +189,12 @@ uint16_t encode_into_codewords(byte *data, uint16_t data_len, byte *codewords, s
     }
     curr_bit += write_bits(extended_codewords, curr_bit, (uint32_t) mode_indicator, MODE_INDICATOR_LEN_BITS);
     curr_bit += write_bits(extended_codewords, curr_bit, (uint32_t) seg.len, cc_len_bits);
-    curr_bit += encoder(data, seg.len, extended_codewords, curr_bit);
+    curr_bit = encoder(data, seg.len, extended_codewords, curr_bit);
     data += seg.len;
   }
-  curr_bit += write_bits(extended_codewords, curr_bit,0, sizeof(byte));
+  if (curr_bit % 8 > 0){
+    curr_bit += write_bits(extended_codewords, curr_bit,0, 8);
+  }
   // Merge extended_codewords into normal one
   for (uint16_t i = 0; i < curr_bit / 8; i++){
     uint8_t byte = 0;
