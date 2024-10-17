@@ -171,6 +171,7 @@ uint16_t encode_numeric(byte *data, uint16_t data_len, byte *codewords, uint16_t
 // Returns number of bytes written
 uint16_t encode_into_codewords(byte *data, uint16_t data_len, byte *codewords, struct ModeSegment *segments, uint16_t segments_len, enum CharCountVersion cc_version) {
   // Current bit of codewords
+  byte extended_codewords[MAX_CODEWORDS * 8];
   uint16_t curr_bit = 0;
   struct ModeSegment seg;
   // Character count and mode indicator data
@@ -196,11 +197,19 @@ uint16_t encode_into_codewords(byte *data, uint16_t data_len, byte *codewords, s
       cc_len_bits = BYTE_CHARACTER_COUNT_LEN[cc_version];
     break;
     }
-    curr_bit += write_bits(codewords, curr_bit, (uint32_t) mode_indicator, MODE_INDICATOR_LEN_BITS);
-    curr_bit += write_bits(codewords, curr_bit, (uint32_t) seg.len, cc_len_bits);
-    curr_bit += encoder(data, seg.len, codewords, curr_bit);
+    curr_bit += write_bits(extended_codewords, curr_bit, (uint32_t) mode_indicator, MODE_INDICATOR_LEN_BITS);
+    curr_bit += write_bits(extended_codewords, curr_bit, (uint32_t) seg.len, cc_len_bits);
+    curr_bit += encoder(data, seg.len, extended_codewords, curr_bit);
     data += seg.len;
   }
-  curr_bit += write_bits(codewords, curr_bit,0, sizeof(byte));
+  curr_bit += write_bits(extended_codewords, curr_bit,0, sizeof(byte));
+  // Merge extended_codewords into normal one
+  for (uint16_t i = 0; i < curr_bit / 8; i++){
+    uint8_t byte = 0;
+    for (uint8_t j = 0; j < 8; j++){
+      byte = (byte << 1) + extended_codewords[8*i+j];
+    }
+    codewords[i] = byte;
+  }
   return curr_bit / 8;
 }

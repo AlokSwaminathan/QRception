@@ -5,7 +5,7 @@
 #include "types.h"
 
 // bits.c
-extern uint16_t write_bits(byte *arr, uint16_t curr_bit, uint32_t data, byte bits);
+extern uint16_t write_bits(byte *arr, uint16_t curr_bit, uint16_t data, byte bits);
 
 // encode.c
 extern uint16_t calculate_total_size_and_get_switches(uint16_t *sizes, byte *data, uint16_t len, struct ModeSegment *segments);
