@@ -9,6 +9,7 @@
 #include "bits.c"
 #include "encode.c"
 #include "mode.c"
+#include "segments.c"
 #include "version.c"
 #include <asm/unistd_64.h>
 
