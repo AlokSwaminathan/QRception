@@ -119,19 +119,20 @@ uint16_t encode_bytes(byte *data, uint16_t data_len, byte *codewords, uint16_t c
 
 // Returns new curr bit
 uint16_t encode_alphanumeric(byte *data, uint16_t data_len, byte *codewords, uint16_t curr_bit) {
-  uint32_t alph_data;
-  for (uint16_t i = 0; i < data_len - 2; i += 2){
-    alph_data = 45*ascii_to_alphanumeric(data[i]);
-    alph_data += ascii_to_alphanumeric(data[i+1]);
-    curr_bit += write_bits(codewords, curr_bit, alph_data, ALPHANUMERIC_TWO_LEN_BITS);
+  uint16_t alph_data = 0;
+  uint8_t bits = ALPHANUMERIC_ONE_LEN_BITS;
+  uint8_t incr = ALPHANUMERIC_TWO_LEN_BITS - ALPHANUMERIC_ONE_LEN_BITS;
+  for (uint16_t i = 0; i < data_len; i++){
+    alph_data = 45*alph_data + ascii_to_alphanumeric(data[i]);
+    if (bits == ALPHANUMERIC_TWO_LEN_BITS) {
+      curr_bit += write_bits(codewords, curr_bit, alph_data, ALPHANUMERIC_TWO_LEN_BITS);
+      alph_data = 0;
+      bits = ALPHANUMERIC_ONE_LEN_BITS - incr;
+    }
+    bits += incr;
   }
-  if (data_len % 2 == 1){
-    alph_data = ascii_to_alphanumeric(data[data_len - 1]);
-    curr_bit += write_bits(codewords, curr_bit, alph_data, ALPHANUMERIC_ONE_LEN_BITS);
-  } else{
-    alph_data = 45*ascii_to_alphanumeric(data[data_len - 2]);
-    alph_data += ascii_to_alphanumeric(data[data_len - 1]);
-    curr_bit += write_bits(codewords, curr_bit, alph_data, ALPHANUMERIC_TWO_LEN_BITS);
+  if (alph_data) {
+    curr_bit += write_bits(codewords, curr_bit, alph_data, bits - incr);
   }
   return curr_bit;
 }
