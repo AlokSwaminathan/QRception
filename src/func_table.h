@@ -12,7 +12,7 @@ extern uint16_t calculate_total_size_and_get_switches(uint16_t *sizes, byte *dat
 extern uint16_t encode_into_codewords(byte *data, uint16_t data_len, byte *codewords, struct ModeSegment *segments, uint16_t segments_len, enum CharCountVersion cc_version);
 
 // err.c
-void get_err_codewords(uint8_t* data, uint8_t data_len, uint8_t* err_codewords, uint8_t* err_codewords_len);
+extern void write_err_block(uint8_t* data, uint8_t data_len, uint8_t* err_codewords, uint8_t* err_codewords_len);
 extern struct ErrData get_err_data(struct Version version);
 
 // galois_field.c

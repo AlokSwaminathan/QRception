@@ -2,7 +2,7 @@
 #include "types.h"
 #include "constants.h"
 
-void get_err_codewords(uint8_t* data, uint8_t data_len, uint8_t* err_codewords, uint8_t* err_codewords_len) {
+void write_err_block(uint8_t* data, uint8_t data_len, uint8_t* err_codewords, uint8_t* err_codewords_len) {
   uint8_t b[MAX_ERROR_CODEWORDS];
   
 }
