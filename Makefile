@@ -50,6 +50,8 @@ $(DBGDIR)/%.o : $(SRCDIR)/%.c $(WATCHED_FILES)
 
 all: debug final symbol_sizes size
 
+asm: $(FULL_ELF_ASM)
+
 debug: $(DBG_TARGET)
 
 final: $(TARGET)
