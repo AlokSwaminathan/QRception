@@ -138,29 +138,19 @@ uint16_t encode_alphanumeric(byte *data, uint16_t data_len, byte *codewords, uin
 
 // Returns number of bits written
 uint16_t encode_numeric(byte *data, uint16_t data_len, byte *codewords, uint16_t curr_bit) {
-  uint32_t numeric_data;
-  for (uint16_t i = 0; i < data_len - 3; i+= 3){
-    numeric_data = 100*(data[i] - '0');
-    numeric_data += 10*(data[i+1] - '0');
-    numeric_data += data[i+2] - '0';
-    curr_bit += write_bits(codewords, curr_bit, numeric_data, NUMERIC_THREE_LEN_BITS);
+  uint16_t numeric_data = 0;
+  uint16_t bits = NUMERIC_ONE_LEN_BITS;
+  for (uint16_t i = 0; i < data_len; i++){
+    numeric_data = (numeric_data * 10) + (data[i] - '0');
+    if (bits == NUMERIC_THREE_LEN_BITS) {
+      curr_bit += write_bits(codewords,curr_bit,numeric_data,bits);
+      numeric_data = 0;
+      bits = NUMERIC_ONE_LEN_BITS - 3;
+    }
+    bits += 3;
   }
-  switch (data_len % 3) {
-  case 0:
-    numeric_data = 100*(data[data_len - 3] - '0');
-    numeric_data += 10*(data[data_len - 2] - '0');
-    numeric_data += data[data_len - 1] - '0';
-    curr_bit += write_bits(codewords, curr_bit, numeric_data, NUMERIC_THREE_LEN_BITS);
-  break;
-  case 1:
-    numeric_data = data[data_len-1] - '0';
-    curr_bit += write_bits(codewords, curr_bit, numeric_data, NUMERIC_ONE_LEN_BITS);
-  break;
-  case 2:
-    numeric_data = data[data_len-1] - '0';
-    numeric_data += 10*(data[data_len-2] - '0');
-    curr_bit += write_bits(codewords, curr_bit, numeric_data, NUMERIC_TWO_LEN_BITS);
-  break;
+  if (numeric_data) {
+    curr_bit += write_bits(codewords, curr_bit, numeric_data, bits - 3);
   }
   return curr_bit;
 }
