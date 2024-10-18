@@ -14,10 +14,14 @@ extern uint16_t encode_into_codewords(byte *data, uint16_t data_len, byte *codew
 // err.c
 extern void write_err_block(uint8_t* data, uint8_t data_len, uint8_t* err_codewords, uint8_t* err_codewords_len);
 extern struct ErrData get_err_data(struct Version version);
+extern void rs_gen_poly(uint8_t degree, uint8_t *res);
 
 // galois_field.c
-extern uint8_t g_add(uint8_t a, uint8_t b);
-extern uint8_t g_mul(uint8_t a, uint8_t b);
+extern uint8_t gf_add(uint8_t a, uint8_t b);
+extern uint8_t gf_mul(uint8_t a, uint8_t b);
+extern uint8_t gf_pow(uint8_t a, uint8_t exp);
+extern void gf_poly_mul(uint8_t *res, uint8_t *p, uint8_t p_len, uint8_t *q, uint8_t q_len);
+extern void gf_poly_div(uint8_t *res, uint8_t *dividend, uint8_t dividend_len, uint8_t *divisor, uint8_t divisor_len);
 
 // main.c
 extern int main(int argc, char **argv, char **envp);
