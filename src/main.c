@@ -39,11 +39,14 @@ int main(int argc, char **argv, char **envp) {
   }
 
   byte codewords[MAX_CODEWORDS];
-  len = encode_into_codewords(qr_data, len, codewords, segments, segments_len, version.cc_version);
+  len = encode_into_codewords(qr_data, version, codewords, segments, segments_len);
 
   struct ErrData err = get_err_data(version);
 
-  syscall3(__NR_write,1,(long) codewords,len);
+  uint8_t res[MAX_CODEWORDS * 10];
+  get_full_codewords(err, codewords, len, res);
+
+  syscall3(__NR_write,1,(long) res,version.cw_capacity*8);
   // Get type of data
   // Select smallest qr code version
   // Generate error correction data

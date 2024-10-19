@@ -9,12 +9,12 @@ extern uint16_t write_bits(byte *arr, uint16_t curr_bit, uint16_t data, byte bit
 
 // encode.c
 extern uint16_t calculate_total_size_and_get_switches(uint16_t *sizes, byte *data, uint16_t len, struct ModeSegment *segments);
-extern uint16_t encode_into_codewords(byte *data, uint16_t data_len, byte *codewords, struct ModeSegment *segments, uint16_t segments_len, enum CharCountVersion cc_version);
+extern uint16_t encode_into_codewords(byte *data, struct Version version, byte *codewords, struct ModeSegment *segments, uint16_t segments_len);
 
 // err.c
-extern void write_err_block(uint8_t* data, uint8_t data_len, uint8_t* err_codewords, uint8_t* err_codewords_len);
 extern struct ErrData get_err_data(struct Version version);
 extern void rs_gen_poly(uint8_t degree, uint8_t *res);
+extern void get_full_codewords(struct ErrData err_data, uint8_t* data, uint8_t data_len, uint8_t *res);
 
 // galois_field.c
 extern uint8_t gf_add(uint8_t a, uint8_t b);

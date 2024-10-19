@@ -53,7 +53,7 @@ uint16_t encode_numeric(byte *data, uint16_t data_len, byte *codewords, uint16_t
 // Returns number of bytes written (last byte padded to 0)
 // Version should be 1-3 in this case, representing a character count version
 // Returns number of bytes written
-uint16_t encode_into_codewords(byte *data, uint16_t data_len, byte *codewords, struct ModeSegment *segments, uint16_t segments_len, enum CharCountVersion cc_version) {
+uint16_t encode_into_codewords(byte *data, struct Version version, byte *codewords, struct ModeSegment *segments, uint16_t segments_len) {
   // Current bit of codewords
   byte extended_codewords[MAX_CODEWORDS * 8];
   uint16_t curr_bit = 0;
@@ -68,17 +68,17 @@ uint16_t encode_into_codewords(byte *data, uint16_t data_len, byte *codewords, s
     case NUM:
       encoder = encode_numeric;
       mode_indicator = NUMERIC_MODE_INDICATOR;
-      cc_len_bits = NUMERIC_CHARACTER_COUNT_LEN[cc_version];
+      cc_len_bits = NUMERIC_CHARACTER_COUNT_LEN[version.cc_version];
     break;
     case ALPH_NUM:
       encoder = encode_alphanumeric;
       mode_indicator = ALPHANUMERIC_MODE_INDICATOR;
-      cc_len_bits = ALPHANUMERIC_CHARACTER_COUNT_LEN[cc_version];
+      cc_len_bits = ALPHANUMERIC_CHARACTER_COUNT_LEN[version.cc_version];
     break;
     case BYTE:
       encoder = encode_bytes;
       mode_indicator = BYTE_MODE_INDICATOR;
-      cc_len_bits = BYTE_CHARACTER_COUNT_LEN[cc_version];
+      cc_len_bits = BYTE_CHARACTER_COUNT_LEN[version.cc_version];
     break;
     }
     curr_bit += write_bits(extended_codewords, curr_bit, (uint32_t) mode_indicator, MODE_INDICATOR_LEN_BITS);
@@ -90,12 +90,16 @@ uint16_t encode_into_codewords(byte *data, uint16_t data_len, byte *codewords, s
     curr_bit += write_bits(extended_codewords, curr_bit,0, 8);
   }
   // Merge extended_codewords into normal one
-  for (uint16_t i = 0; i < curr_bit / 8; i++){
+  curr_bit /= 8;
+  for (uint16_t i = 0; i < curr_bit; i++){
     uint8_t byte = 0;
     for (uint8_t j = 0; j < 8; j++){
       byte = (byte << 1) + extended_codewords[8*i+j];
     }
     codewords[i] = byte;
   }
-  return curr_bit / 8;
+  for (; curr_bit < version.capacity; curr_bit += 2) {
+    *(uint16_t*)(&codewords[curr_bit]) = 0b0001000111101100; 
+  }
+  return curr_bit;
 }

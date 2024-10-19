@@ -2,11 +2,6 @@
 #include "types.h"
 #include "constants.h"
 
-void write_err_block(uint8_t* data, uint8_t data_len, uint8_t* err_codewords, uint8_t* err_codewords_len) {
-  uint8_t b[MAX_ERROR_CODEWORDS];
-  
-}
-
 struct ErrData get_err_data(struct Version version) {
   uint16_t total_block_cw = ERR_CODEWORD_BLOCKS[version.version][version.ec_version];
 
@@ -46,11 +41,44 @@ void rs_gen_poly(uint8_t degree, uint8_t *res) {
 }
 
 void rs_compute_codewords(uint8_t *data, uint8_t data_len, uint8_t *err, uint8_t err_len) {
-  uint8_t gen_poly[MAX_POLYNOMIAL_LEN] = {0};
-  uint8_t res_poly[MAX_POLYNOMIAL_LEN] = {0};
+  uint8_t gen_poly[MAX_POLYNOMIAL_LEN] = {0}; uint8_t res_poly[MAX_POLYNOMIAL_LEN] = {0};
   rs_gen_poly(err_len, gen_poly);
   gf_poly_div(res_poly, data, data_len, gen_poly, err_len + 1); 
   for (uint8_t i = 0; i < err_len; i++) {
     err[i] = res_poly[data_len+i];
+  }
+}
+
+// Res will be written to where each byte is a bit
+void get_full_codewords(struct ErrData err_data, uint8_t* data, uint8_t data_len, uint8_t *res) {
+  uint8_t errs[256][256];
+  
+  uint16_t curr = 0;
+  for (uint8_t i = 0; i < err_data.block_lens[0]; i++) {
+    rs_compute_codewords(&data[curr*i],err_data.data_lens[0], errs[i], err_data.err_len);
+    curr += err_data.data_lens[0];
+  }
+  
+  for (uint8_t i = 0; i < err_data.block_lens[1]; i++) {
+    rs_compute_codewords(&data[curr],err_data.data_lens[1], errs[i + err_data.block_lens[0]], err_data.err_len);
+    curr += err_data.data_lens[1];
+  }
+
+  uint16_t curr_res = 0;
+  for (uint8_t i = 0; i < err_data.data_lens[1]; i++) {
+    curr = i;
+    for (uint8_t j = 0; j < err_data.block_lens[0] && i < err_data.data_lens[0]; j++) {
+      curr_res += write_bits(res, curr_res, data[curr], 8);
+      curr += err_data.block_lens[0];
+    } 
+    for (uint8_t j = 0; j < err_data.block_lens[1]; j++) {
+      curr_res += write_bits(res, curr_res, data[curr], 8);
+      curr += err_data.block_lens[1];
+    } 
+  }
+  for (uint8_t i = 0; i < err_data.err_len; i++) {
+    for (uint8_t j = 0; j < err_data.block_lens[0] + err_data.block_lens[1]; j++) {
+      curr_res += write_bits(res, curr_res, errs[j][i], 8);
+    }
   }
 }
