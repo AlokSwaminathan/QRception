@@ -75,7 +75,7 @@ GCC_STANDARD_SYMBOL_RE = r"(\.L\w+):\n"
 GCC_WORD_RE = r"(\w+) PTR"
 GCC_FUNC_CALL_RE = r"(.+)@PLT\n"
 GCC_RIP_RE = r"(\s(\w|\.)+)\[rip\]"
-GCC_SHR_RE = r"(\tshr\t\w+\n)"
+GCC_SHR_RE = r"(\ts(?:h|a)r\t\w+\n)"
 
 RENAME_LIST = [
     (".byte", "db"),
