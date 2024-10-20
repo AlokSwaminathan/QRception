@@ -7,6 +7,8 @@
 // 1 - Versions 10-26
 // 2 - Versions 27-40
 void get_mode_specific_size(uint16_t *sizes, enum Mode mode, uint16_t len) {
+  #pragma GCC diagnostic push
+  #pragma GCC diagnostic ignored "-Wmaybe-uninitialized"
   const uint8_t *character_counts;
   uint16_t base_size = MODE_INDICATOR_LEN_BITS;
   switch (mode) {
@@ -26,6 +28,7 @@ void get_mode_specific_size(uint16_t *sizes, enum Mode mode, uint16_t len) {
   for (uint8_t i = 0; i < DISTINCT_CHARACTER_COUNT_SIZES; i++) {
     sizes[i] = base_size + character_counts[i];
   }
+  #pragma GCC diagnostic pop
 }
 
 enum SwitchMode should_switch(enum Mode curr_mode, enum Mode new_mode, uint16_t match_streak, uint16_t miss_streak) {

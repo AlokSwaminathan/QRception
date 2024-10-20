@@ -30,7 +30,9 @@
 #define MAX_MODE_SEGMENTS (1000)
 
 // From QR Spec (2956) with some extra bytes since the bit insertion might write over
-#define MAX_CODEWORDS (2956+10)
+#define MAX_DATA_CODEWORDS (2956+10)
+#define MAX_CODEWORDS (3706+10)
+#define MAX_VERSION_SIZE (177)
 
 #define NUMERIC_MODE_INDICATOR (0b0001)
 #define ALPHANUMERIC_MODE_INDICATOR (0b0010)

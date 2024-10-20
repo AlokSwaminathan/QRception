@@ -50,7 +50,7 @@ void rs_compute_codewords(uint8_t *data, uint8_t data_len, uint8_t *err, uint8_t
 }
 
 // Res will be written to where each byte is a bit
-void get_full_codewords(struct ErrData err_data, uint8_t* data, uint8_t data_len, uint8_t *res) {
+void get_full_codewords(struct ErrData err_data, uint8_t* data, uint8_t *res) {
   uint8_t errs[256][256];
   
   uint16_t curr = 0;

@@ -2,6 +2,8 @@
 #include "types.h"
 
 static inline enum CharCountVersion get_cc_version(uint8_t version){
+  #pragma GCC diagnostic push
+  #pragma GCC diagnostic ignored "-Wreturn-type"
   if (version >= 1 && version <= 9)
     return CC_ONE;
   else if (version >= 10 && version <= 26)
@@ -9,6 +11,7 @@ static inline enum CharCountVersion get_cc_version(uint8_t version){
   else if (version >= 27 && version <= 40)
     return CC_THREE;
 }
+#pragma GCC diagnostic pop
 
 struct Version get_smallest_version(uint16_t *sizes, enum ErrorCorrectionVersion ec) {
   enum CharCountVersion cc_version;

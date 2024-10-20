@@ -58,6 +58,10 @@ uint16_t encode_into_codewords(byte *data, struct Version version, byte *codewor
   byte extended_codewords[MAX_CODEWORDS * 8];
   uint16_t curr_bit = 0;
   struct ModeSegment seg;
+
+  #pragma GCC diagnostic push
+  #pragma GCC diagnostic ignored "-Wmaybe-uninitialized"
+  
   // Character count and mode indicator data
   uint8_t cc_len_bits;
   uint8_t mode_indicator;
@@ -86,6 +90,8 @@ uint16_t encode_into_codewords(byte *data, struct Version version, byte *codewor
     curr_bit = encoder(data, seg.len, extended_codewords, curr_bit);
     data += seg.len;
   }
+  #pragma GCC diagnostic pop 
+
   if (curr_bit % 8 > 0){
     curr_bit += write_bits(extended_codewords, curr_bit,0, 8);
   }

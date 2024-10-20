@@ -10,6 +10,7 @@
 #include "encode.c"
 #include "mode.c"
 #include "segments.c"
+#include "symbols.c"
 #include "version.c"
 #include <asm/unistd_64.h>
 
@@ -38,13 +39,17 @@ int main(int argc, char **argv, char **envp) {
     return 1;
   }
 
-  byte codewords[MAX_CODEWORDS];
+  byte codewords[MAX_DATA_CODEWORDS];
   len = encode_into_codewords(qr_data, version, codewords, segments, segments_len);
 
   struct ErrData err = get_err_data(version);
 
-  uint8_t res[MAX_CODEWORDS * 10];
-  get_full_codewords(err, codewords, len, res);
+  uint8_t res[MAX_CODEWORDS * 8];
+  get_full_codewords(err, codewords, res);
+
+  uint8_t qr_matrix[MAX_VERSION_SIZE][MAX_VERSION_SIZE];
+  
+  uint8_t qr_matrix_size = 21+4*version.version;
 
   syscall3(__NR_write,1,(long) res,version.cw_capacity*8);
   // Get type of data
