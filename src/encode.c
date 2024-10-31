@@ -92,6 +92,8 @@ uint16_t encode_into_codewords(byte *data, struct Version version, byte *codewor
   }
   #pragma GCC diagnostic pop 
 
+  curr_bit += write_bits(extended_codewords, curr_bit, TERMINATOR, MODE_INDICATOR_LEN_BITS);
+
   if (curr_bit % 8 > 0){
     curr_bit += write_bits(extended_codewords, curr_bit,0, 8);
   }
