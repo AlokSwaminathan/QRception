@@ -32,15 +32,14 @@
 // From QR Spec (2956) with some extra bytes since the bit insertion might write over
 #define MAX_DATA_CODEWORDS (2956+10)
 #define MAX_CODEWORDS (3706+10)
-#define MAX_VERSION_SIZE (177)
+#define QR_MATRIX_PADDING (3)
+#define MAX_QR_MATRIX_SIZE (177 + 2*(QR_MATRIX_PADDING))
 
 #define NUMERIC_MODE_INDICATOR (0b0001)
 #define ALPHANUMERIC_MODE_INDICATOR (0b0010)
 #define BYTE_MODE_INDICATOR (0b0100)
-
 #define TERMINATOR (0b0000)
 #define BYTE_LEN_BITS (8)
-
 #define ALPHANUMERIC_TWO_LEN_BITS (11)
 #define ALPHANUMERIC_ONE_LEN_BITS (6)
 
@@ -59,5 +58,10 @@ extern const uint8_t ERR_CODEWORD_BLOCKS[40][4];
 #define MAX_ERROR_CODEWORDS (30)
 #define MAX_DEGREE_GENERATOR_POLYNOMIAL (MAX_ERROR_CODEWORDS)
 #define MAX_POLYNOMIAL_LEN (256)
+
+#define DATA_SIZE(version) (version * 4 + 21)
+
+#define QR_MATRIX_WHITE_VALUE (1)
+#define QR_MATRIX_BLACK_VALUE (2)
 
 #endif

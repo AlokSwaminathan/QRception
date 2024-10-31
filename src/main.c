@@ -47,9 +47,9 @@ int main(int argc, char **argv, char **envp) {
   uint8_t res[MAX_CODEWORDS * 8];
   get_full_codewords(err, codewords, res);
 
-  uint8_t qr_matrix[MAX_VERSION_SIZE][MAX_VERSION_SIZE];
+  uint8_t qr_matrix[MAX_QR_MATRIX_SIZE][MAX_QR_MATRIX_SIZE] = {0};
   
-  uint8_t qr_matrix_size = 21+4*version.version;
+  uint8_t qr_matrix_size = DATA_SIZE(version.version);
 
   syscall3(__NR_write,1,(long) res,version.cw_capacity*8);
   // Get type of data

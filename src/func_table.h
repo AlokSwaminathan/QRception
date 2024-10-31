@@ -3,6 +3,7 @@
 
 #include "syscalls.h"
 #include "types.h"
+#include "constants.h"
 
 // bits.c
 extern uint16_t write_bits(byte *arr, uint16_t curr_bit, uint16_t data, byte bits);
