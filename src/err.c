@@ -82,3 +82,17 @@ void get_full_codewords(struct ErrData err_data, uint8_t* data, uint8_t *res) {
     }
   }
 }
+
+// Function to generate the Golay codeword
+uint32_t generate_golay_code(uint8_t data) {
+    uint32_t codeword = (uint32_t)data << 12;
+    uint32_t gen_poly = GOLAY_GEN_POLY;
+
+    for (uint8_t i = 17; i >= 12; i--) {
+        if (codeword & (1 << i)) {
+            codeword ^= gen_poly << (i - 12);
+        }
+    }
+
+    return (data << 12) | (codeword & 0xFFF);
+}

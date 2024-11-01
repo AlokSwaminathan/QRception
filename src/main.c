@@ -1,18 +1,21 @@
 // Looks like including the .c file directly so gcc can make one .S file is more effective than merging separate ones
 // merge_asm still works even though it isnt merging anything anymore
+#include <asm/unistd_64.h>
+
 #include "func_table.h"
-#include "galois_field.c"
-#include "err.c"
-#include "constants.h"
-#include "constants.c"
-#include "types.h"
 #include "bits.c"
+#include "constants.c"
+#include "constants.h"
 #include "encode.c"
+#include "err.c"
+#include "galois_field.c"
 #include "mode.c"
 #include "patterns.c"
 #include "segments.c"
+#include "syscalls.h"
+#include "types.h"
 #include "version.c"
-#include <asm/unistd_64.h>
+#include "write_info.c"
 
 int main(int argc, char **argv, char **envp) {
   if (argc < 2 || argc > 3)
@@ -44,8 +47,8 @@ int main(int argc, char **argv, char **envp) {
 
   struct ErrData err = get_err_data(version);
 
-  uint8_t res[MAX_CODEWORDS * 8];
-  get_full_codewords(err, codewords, res);
+  uint8_t res_bits[MAX_CODEWORDS * 8];
+  get_full_codewords(err, codewords, res_bits);
 
   uint8_t qr_matrix[MAX_QR_MATRIX_SIZE][MAX_QR_MATRIX_SIZE] = {0};
   
@@ -53,10 +56,7 @@ int main(int argc, char **argv, char **envp) {
 
   write_patterns(qr_matrix,version.version,qr_matrix_size);
 
-  syscall3(__NR_write,1,(long) res,version.cw_capacity*8);
-  // Get type of data
-  // Select smallest qr code version
-  // Generate error correction data
-  // Set up final message
-  // Set up final matrix including the finder patters, separators, and timing patterns
+  write_version_info(qr_matrix, version.version, qr_matrix_size);
+
+  syscall3(__NR_write,1,(long) res_bits,version.cw_capacity*8);
 }

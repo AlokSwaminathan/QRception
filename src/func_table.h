@@ -16,6 +16,7 @@ extern void encode_into_codewords(byte *data, struct Version version, byte *code
 extern struct ErrData get_err_data(struct Version version);
 extern void rs_gen_poly(uint8_t degree, uint8_t *res);
 extern void get_full_codewords(struct ErrData err_data, uint8_t* data, uint8_t *res);
+extern uint32_t generate_golay_code(uint8_t data);
 
 // galois_field.c
 extern uint8_t gf_add(uint8_t a, uint8_t b);
