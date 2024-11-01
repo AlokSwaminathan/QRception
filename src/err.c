@@ -83,6 +83,20 @@ void get_full_codewords(struct ErrData err_data, uint8_t* data, uint8_t *res) {
   }
 }
 
+// Function to generate the (15,5) BCH codeword for 5 bits of data
+uint16_t generate_bch_code(uint8_t data) {
+    uint16_t codeword = (uint16_t)data << 10;
+    uint16_t gen_poly = BCH_GEN_POLY;
+
+    for (uint8_t i = 14; i >= 10; i--) {
+        if (codeword & (1 << i)) {
+            codeword ^= gen_poly << (i - 10);
+        }
+    }
+
+    return (data << 10) | (codeword & 0x3FF);
+}
+
 // Function to generate the Golay codeword
 uint32_t generate_golay_code(uint8_t data) {
     uint32_t codeword = (uint32_t)data << 12;

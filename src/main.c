@@ -58,5 +58,7 @@ int main(int argc, char **argv, char **envp) {
 
   write_version_info(qr_matrix, version.version, qr_matrix_size);
 
+  write_format_info(qr_matrix, err_ver, qr_matrix_size);
+
   syscall3(__NR_write,1,(long) res_bits,version.cw_capacity*8);
 }

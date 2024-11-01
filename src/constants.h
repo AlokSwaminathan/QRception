@@ -76,10 +76,22 @@ extern const uint8_t ALIGNMENT_PATTERN_DIFFS[NUM_VERSIONS];
 #define REVERSE_QR_MATRIX_VAL(val) (((val) + 6) % 4)
 #define BIT_TO_QR_MATRIX_VAL(val) (((val) * 2) + 1)
 
+// QR Code generator polynomial for (15, 5) BCH code
+// Polynomial: x^10 + x^8 + x^5 + x^4 + x^2 + x + 1
+#define BCH_GEN_POLY (0b10100110111)
+#define BCH_LEN (15)
 
 // QR Code generator polynomial for (18,6) Golay code
 // Polynomial: x^12 + x^11 + x^10 + x^9 + x^8 + x^5 + x^2 + 1
 #define GOLAY_GEN_POLY (0b1111100100101)
 #define GOLAY_LEN (18)
+
+// Mask for format info from BCH Code
+#define FORMAT_INFO_MASK (0b101010000010010)
+
+// Easiest one
+#define DEFAULT_DATA_MASK (0b001)
+
+#define MASK_DATA(val,y) ((val) ^ (y % 2 == 0))
 
 #endif
