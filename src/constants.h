@@ -70,7 +70,9 @@ extern const uint8_t ALIGNMENT_PATTERN_DIFFS[NUM_VERSIONS];
 #define DATA_SIZE(version) (version * 4 + 21)
 
 #define QR_MATRIX_WHITE_VALUE (1)
-#define QR_MATRIX_BLACK_VALUE (2)
+#define QR_MATRIX_BLACK_VALUE (3)
 #define QR_MATRIX_DEFAULT_VALUE (0)
 
+#define REVERSE_QR_MATRIX_VAL(val) (((val) + 6) % 4)
+#define BIT_TO_QR_MATRIX_VAL(val) (((val) * 2) + 1)
 #endif
