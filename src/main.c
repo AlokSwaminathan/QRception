@@ -48,6 +48,12 @@ int main(int argc, char **argv, char **envp) {
   struct ErrData err = get_err_data(version);
 
   uint8_t res_bits[MAX_CODEWORDS * 8];
+
+  // Write white bytes here so if the QR symbol has extra space white will be written
+  for (uint16_t i = 0; i < sizeof(res_bits); i++) {
+    res_bits[i] = 1;
+  }
+
   get_full_codewords(err, codewords, res_bits);
 
   uint8_t qr_matrix[MAX_QR_MATRIX_SIZE][MAX_QR_MATRIX_SIZE] = {0};
@@ -59,6 +65,8 @@ int main(int argc, char **argv, char **envp) {
   write_version_info(qr_matrix, version.version, qr_matrix_size);
 
   write_format_info(qr_matrix, err_ver, qr_matrix_size);
+
+  write_matrix(qr_matrix, res_bits, version.cw_capacity * 8, qr_matrix_size);
 
   syscall3(__NR_write,1,(long) res_bits,version.cw_capacity*8);
 }

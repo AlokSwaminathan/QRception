@@ -2,6 +2,40 @@
 #include "constants.h"
 #include "types.h"
 
+void write_matrix(uint8_t matrix[MAX_QR_MATRIX_SIZE][MAX_QR_MATRIX_SIZE],uint8_t *codewords_bits, uint8_t codewords_len, uint8_t version_size) {
+  uint16_t curr_bit = 0;
+  bool up = true;
+  for (uint8_t x = QR_MATRIX_PADDING + version_size - 1; x > QR_MATRIX_PADDING - 1; x -= 2) {
+    // Sets diff to 255 if up=1 (true), otherwise diff is 1
+    uint8_t diff = 1 + 254*up;
+    // 0 if true, version_size - 1 if false
+    uint8_t start = up * (version_size - 1);
+    uint8_t iters = 0;
+    for (uint8_t y = QR_MATRIX_PADDING + start; iters < version_size; y += diff, iters++) {
+      if (matrix[y][x] == QR_MATRIX_DEFAULT_VALUE) {
+        // Write BMP final value now to save time
+        matrix[y][x] = MASK_DATA(!codewords_bits[curr_bit], y) * 255;
+        curr_bit++;
+      } else {
+        // Update to BMP final value
+        matrix[y][x] /= 2;
+        matrix[y][x] += 255;
+      }
+
+      // Somehow saves space, idk why the compiler can't do this
+      uint8_t new_x = x - 1;
+      if (matrix[y][new_x] == QR_MATRIX_DEFAULT_VALUE) {
+        matrix[y][new_x] = MASK_DATA(!codewords_bits[curr_bit], y) * 255;
+        curr_bit++;
+      } else {
+        matrix[y][new_x] /= 2;
+        matrix[y][new_x] += 255;
+      }
+    }
+    up = !up;
+  }
+}
+
 void write_version_info(uint8_t matrix[MAX_QR_MATRIX_SIZE][MAX_QR_MATRIX_SIZE], uint8_t version, uint8_t version_size) {
   uint32_t version_info = generate_golay_code(version+1);
   uint8_t start_x = QR_MATRIX_PADDING + version_size - FINDER_PATTERN_HEIGHT - 2; 
