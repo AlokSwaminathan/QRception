@@ -10,7 +10,7 @@ extern uint16_t write_bits(byte *arr, uint16_t curr_bit, uint16_t data, byte bit
 
 // encode.c
 extern uint16_t calculate_total_size_and_get_switches(uint16_t *sizes, byte *data, uint16_t len, struct ModeSegment *segments);
-extern uint16_t encode_into_codewords(byte *data, struct Version version, byte *codewords, struct ModeSegment *segments, uint16_t segments_len);
+extern void encode_into_codewords(byte *data, struct Version version, byte *codewords, struct ModeSegment *segments, uint16_t segments_len);
 
 // err.c
 extern struct ErrData get_err_data(struct Version version);

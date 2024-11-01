@@ -52,8 +52,7 @@ uint16_t encode_numeric(byte *data, uint16_t data_len, byte *codewords, uint16_t
 // Expects codewords to be len 2956
 // Returns number of bytes written (last byte padded to 0)
 // Version should be 1-3 in this case, representing a character count version
-// Returns number of bytes written
-uint16_t encode_into_codewords(byte *data, struct Version version, byte *codewords, struct ModeSegment *segments, uint16_t segments_len) {
+void encode_into_codewords(byte *data, struct Version version, byte *codewords, struct ModeSegment *segments, uint16_t segments_len) {
   // Current bit of codewords
   byte extended_codewords[MAX_CODEWORDS * 8];
   uint16_t curr_bit = 0;
@@ -109,5 +108,4 @@ uint16_t encode_into_codewords(byte *data, struct Version version, byte *codewor
   for (; curr_bit < version.capacity; curr_bit += 2) {
     *(uint16_t*)(&codewords[curr_bit]) = 0b0001000111101100; 
   }
-  return curr_bit;
 }
