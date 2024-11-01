@@ -9,8 +9,8 @@
 #include "bits.c"
 #include "encode.c"
 #include "mode.c"
+#include "patterns.c"
 #include "segments.c"
-#include "symbols.c"
 #include "version.c"
 #include <asm/unistd_64.h>
 
