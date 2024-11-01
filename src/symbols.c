@@ -23,7 +23,7 @@ void write_rings(uint8_t x, uint8_t y, uint8_t size, uint8_t matrix[MAX_QR_MATRI
 
 #define max_alignment_coord(version) (14 + 4*(version))
 
-void write_symbols(uint8_t matrix[MAX_QR_MATRIX_SIZE][MAX_QR_MATRIX_SIZE], uint8_t version, uint8_t version_size) {
+void write_patterns(uint8_t matrix[MAX_QR_MATRIX_SIZE][MAX_QR_MATRIX_SIZE], uint8_t version, uint8_t version_size) {
   // Write the 3 finder patterns
   write_finder_pattern(QR_MATRIX_PADDING-1,QR_MATRIX_PADDING-1,matrix);
   write_finder_pattern(QR_MATRIX_PADDING-1, QR_MATRIX_PADDING+version_size-FINDER_PATTERN_HEIGHT+1, matrix);
@@ -55,11 +55,13 @@ void write_symbols(uint8_t matrix[MAX_QR_MATRIX_SIZE][MAX_QR_MATRIX_SIZE], uint8
     if (i == num_coords - 1)
       x = 6;
     uint8_t y = top_val;
-    for (uint8_t j = 0; i < num_coords; j++) {
+    for (uint8_t j = 0; j < num_coords; j++) {
       if (j == num_coords - 1)
         y = 6;
-      if ((x == 6 && (y == 6 || j == 0)) || (i == 0 && j == 6))
+      if ((x == 6 && (y == 6 || j == 0)) || (i == 0 && y == 6)){
+        y -= ALIGNMENT_PATTERN_DIFFS[version]; 
         continue;
+      }
       write_alignment_pattern(QR_MATRIX_PADDING + x - 2, QR_MATRIX_PADDING + y - 2, matrix);
       y -= ALIGNMENT_PATTERN_DIFFS[version]; 
     }

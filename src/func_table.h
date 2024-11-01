@@ -31,6 +31,9 @@ extern int main(int argc, char **argv, char **envp);
 extern enum Mode get_mode(byte c);
 extern byte ascii_to_alphanumeric(byte c);
 
+// symbols.c
+extern void write_patterns(uint8_t matrix[MAX_QR_MATRIX_SIZE][MAX_QR_MATRIX_SIZE], uint8_t version, uint8_t version_size);
+
 // version.c
 extern struct Version get_smallest_version(uint16_t *sizes, enum ErrorCorrectionVersion ec);
 

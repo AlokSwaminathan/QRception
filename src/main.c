@@ -40,7 +40,7 @@ int main(int argc, char **argv, char **envp) {
   }
 
   byte codewords[MAX_DATA_CODEWORDS];
-  len = encode_into_codewords(qr_data, version, codewords, segments, segments_len);
+  encode_into_codewords(qr_data, version, codewords, segments, segments_len);
 
   struct ErrData err = get_err_data(version);
 
@@ -50,6 +50,8 @@ int main(int argc, char **argv, char **envp) {
   uint8_t qr_matrix[MAX_QR_MATRIX_SIZE][MAX_QR_MATRIX_SIZE] = {0};
   
   uint8_t qr_matrix_size = DATA_SIZE(version.version);
+
+  write_patterns(qr_matrix,version.version,qr_matrix_size);
 
   syscall3(__NR_write,1,(long) res,version.cw_capacity*8);
   // Get type of data
