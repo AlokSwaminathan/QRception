@@ -21,6 +21,7 @@ DBGOBJS := $(patsubst $(SRCDIR)/%.c, $(DBGDIR)/%.o, $(SRCS))
 TARGET := qr_generator
 DBG_TARGET := $(DBGDIR)/$(TARGET)
 TARGET_OBJ := $(BUILDDIR)/$(TARGET).o
+PREPROCESSED_TARGET := $(BUILDDIR)/qr_generator.E
 FULL_ELF_ASM := $(BUILDDIR)/$(TARGET).asm
 
 $(FULL_ELF_ASM) : $(SRCASMS)
@@ -32,6 +33,10 @@ $(FULL_ELF_ASM) : $(SRCASMS)
 $(TARGET) : $(FULL_ELF_ASM)
 	nasm -f bin -o $(TARGET) $(FULL_ELF_ASM)
 	chmod +x $(TARGET)
+
+$(PREPROCESSED_TARGET) : $(SRCS) $(WATCHED_FILES)
+	@mkdir -p $(BUILDDIR)
+	$(CC) -E $< -o $@
 
 $(TARGET_OBJ) : $(FULL_ELF_ASM)
 	nasm -f elf64 -o $(TARGET_OBJ) $(FULL_ELF_ASM)
@@ -51,6 +56,8 @@ $(DBGDIR)/%.o : $(SRCDIR)/%.c $(WATCHED_FILES)
 all: debug final symbol_sizes size
 
 asm: $(FULL_ELF_ASM)
+
+expand: $(PREPROCESSED_TARGET)
 
 debug: $(DBG_TARGET)
 
