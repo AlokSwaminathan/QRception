@@ -5,14 +5,13 @@
 // Assumes bmp is long enough
 // Assumes bmp is 0'd
 uint32_t matrix_to_bmp(uint8_t *bmp, uint8_t matrix[MAX_QR_MATRIX_SIZE][MAX_QR_MATRIX_SIZE], uint8_t version_size) {
+  uint8_t *start = bmp;
+
   uint16_t pixel_width = BMP_WIDTH_HEIGHT(version_size);
-  uint32_t total_len = BMP_FILE_SIZE(pixel_width);
 
   bmp[BMP_FILE_HEADER_OFFSET] = BMP_FILE_HEADER_ONE;
   bmp[BMP_FILE_HEADER_OFFSET + 1] = BMP_FILE_HEADER_TWO;
   
-  *(uint32_t*)(&bmp[BMP_FILE_SIZE_OFFSET]) = total_len;
-
   bmp[BMP_DATA_OFFSET_OFFSET] = BMP_HEADERS_LEN;
 
   bmp[BMP_SECOND_HEADER_SIZE_OFFSET] = BMP_SECOND_HEADER_SIZE;
@@ -43,6 +42,10 @@ uint32_t matrix_to_bmp(uint8_t *bmp, uint8_t matrix[MAX_QR_MATRIX_SIZE][MAX_QR_M
       bmp++;
     }
   }
+
+  uint32_t total_len = bmp - start;
+
+  *(uint32_t*)(&bmp[BMP_FILE_SIZE_OFFSET]) = total_len;
 
   return total_len; 
 }
