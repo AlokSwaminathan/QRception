@@ -63,7 +63,9 @@ int main(int argc, char **argv, char **envp) {
 
   write_patterns(qr_matrix,version.version,qr_matrix_size);
 
-  write_version_info(qr_matrix, version.version, qr_matrix_size);
+  if (version.version >= MIN_VERSION_INFO_VERSION) {
+    write_version_info(qr_matrix, version.version, qr_matrix_size);
+  }
 
   write_format_info(qr_matrix, err_ver, qr_matrix_size);
 

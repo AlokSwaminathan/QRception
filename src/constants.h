@@ -53,6 +53,8 @@
 
 #define NUM_VERSIONS (40)
 
+#define MIN_VERSION_INFO_VERSION (6)
+
 extern const uint8_t NUMERIC_CHARACTER_COUNT_LEN[3];
 extern const uint8_t ALPHANUMERIC_CHARACTER_COUNT_LEN[3];
 extern const uint8_t BYTE_CHARACTER_COUNT_LEN[3];
