@@ -23,10 +23,10 @@ enum CharCountVersion {
 };
 
 enum ErrorCorrectionVersion {
-  EC_LOW = 0,
-  EC_MID = 1,
-  EC_QUARTILE = 2,
-  EC_HIGH = 3,
+  EC_LOW = 0b01,
+  EC_MID = 0b00,
+  EC_QUARTILE = 0b11,
+  EC_HIGH = 0b10,
 };
 
 struct Version {
