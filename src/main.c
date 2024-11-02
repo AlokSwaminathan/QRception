@@ -4,6 +4,7 @@
 
 #include "func_table.h"
 #include "bits.c"
+#include "bmp.c"
 #include "constants.c"
 #include "constants.h"
 #include "encode.c"
@@ -68,5 +69,10 @@ int main(int argc, char **argv, char **envp) {
 
   write_matrix(qr_matrix, res_bits, version.cw_capacity * 8, qr_matrix_size);
 
-  syscall3(__NR_write,1,(long) res_bits,version.cw_capacity*8);
+
+  uint8_t bmp[MAX_BMP_LEN] = {0};
+
+  uint32_t bmp_len = matrix_to_bmp(bmp, qr_matrix, qr_matrix_size);
+
+  syscall3(__NR_write,1,(long) bmp, bmp_len);
 }

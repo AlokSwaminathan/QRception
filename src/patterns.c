@@ -30,7 +30,7 @@ void write_patterns(uint8_t matrix[MAX_QR_MATRIX_SIZE][MAX_QR_MATRIX_SIZE], uint
   write_finder_pattern(QR_MATRIX_PADDING+version_size-FINDER_PATTERN_HEIGHT+1, QR_MATRIX_PADDING-1, matrix);
 
   // BMP to paddings
-  write_rings(0,0,version_size+2*QR_MATRIX_PADDING,matrix,255,3);
+  write_rings(0,0,version_size+2*QR_MATRIX_PADDING,matrix,255, QR_MATRIX_PADDING);
 
   // Set random black bit
   matrix[QR_MATRIX_PADDING+version_size-FINDER_PATTERN_HEIGHT+1][QR_MATRIX_PADDING+FINDER_PATTERN_HEIGHT-1] = QR_MATRIX_BLACK_VALUE;

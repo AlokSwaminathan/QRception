@@ -8,6 +8,9 @@
 // bits.c
 extern uint16_t write_bits(byte *arr, uint16_t curr_bit, uint16_t data, byte bits);
 
+// bmp.c
+extern uint32_t matrix_to_bmp(uint8_t *bmp, uint8_t matrix[MAX_QR_MATRIX_SIZE][MAX_QR_MATRIX_SIZE], uint8_t version_size);
+
 // encode.c
 extern uint16_t calculate_total_size_and_get_switches(uint16_t *sizes, byte *data, uint16_t len, struct ModeSegment *segments);
 extern void encode_into_codewords(byte *data, struct Version version, byte *codewords, struct ModeSegment *segments, uint16_t segments_len);

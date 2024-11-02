@@ -94,4 +94,41 @@ extern const uint8_t ALIGNMENT_PATTERN_DIFFS[NUM_VERSIONS];
 
 #define MASK_DATA(val,y) ((val) ^ (y % 2 == 0))
 
+// BMP Constants
+#define BMP_HEADERS_LEN (14 + 40 + 8) 
+
+// 8 since 8 bits in a byte so easier to set up
+#define BMP_PIXELS_PER_MODULE (8)
+
+// 72 ppi, don't think it  matters but this is the "default"
+#define BMP_PIXELS_PER_METER (2835)
+
+#define BMP_WIDTH_HEIGHT(version_size) (((uint16_t) BMP_PIXELS_PER_MODULE) * ((2 * QR_MATRIX_PADDING) + (version_size)))
+#define BMP_FILE_SIZE(width) (BMP_HEADERS_LEN + (((uint32_t) width * (uint32_t) width) / BMP_PIXELS_PER_MODULE))
+
+#define MAX_BMP_LEN (BMP_HEADERS_LEN + ((MAX_QR_MATRIX_SIZE * MAX_QR_MATRIX_SIZE) * (BMP_PIXELS_PER_MODULE)))
+
+#define BMP_FILE_HEADER_ONE (0x42)
+#define BMP_FILE_HEADER_TWO (0x4d)
+
+#define BMP_SECOND_HEADER_SIZE (40)
+#define BMP_NUM_COLOR_PLANES (1)
+
+#define BMP_BITS_PER_PIXEL (1)
+
+#define BMP_WHITE_VAL (0xff)
+
+#define BMP_FILE_HEADER_OFFSET (0)
+#define BMP_FILE_SIZE_OFFSET (2)
+#define BMP_DATA_OFFSET_OFFSET (10)
+#define BMP_SECOND_HEADER_SIZE_OFFSET (14)
+#define BMP_WIDTH_PIXELS_OFFSET (18)
+#define BMP_HEIGHT_PIXELS_OFFSET (22)
+#define BMP_COLOR_PLANES_OFFSET (26)
+#define BMP_BITS_PER_PIXEL_OFFSET (28)
+#define BMP_IMAGE_SIZE_OFFSET (34) // Apparently optional when using no compression
+#define BMP_HORIZONTAL_RES_OFFSET (38)
+#define BMP_VERTICAL_RES_OFFSET (42)
+#define BMP_WHITE_COLOR_OFFSET (58)
+
 #endif

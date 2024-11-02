@@ -32,7 +32,15 @@ void write_matrix(uint8_t matrix[MAX_QR_MATRIX_SIZE][MAX_QR_MATRIX_SIZE],uint8_t
         matrix[y][new_x] += 255;
       }
     }
+
+    x -= (x == (QR_MATRIX_PADDING + FINDER_PATTERN_HEIGHT - 1));
+  
     up = !up;
+  }
+  uint8_t x = QR_MATRIX_PADDING + FINDER_PATTERN_HEIGHT - 3;
+  for (uint8_t y = QR_MATRIX_PADDING; y < version_size + QR_MATRIX_PADDING; y++) {
+    matrix[y][x] /= 2;
+    matrix[y][x] += 255;
   }
 }
 
