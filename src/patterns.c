@@ -23,29 +23,7 @@ void write_rings(uint8_t x, uint8_t y, uint8_t size, uint8_t matrix[MAX_QR_MATRI
 
 #define max_alignment_coord(version) (14 + 4*(version))
 
-void write_patterns(uint8_t matrix[MAX_QR_MATRIX_SIZE][MAX_QR_MATRIX_SIZE], uint8_t version, uint8_t version_size) {
-  // Write the 3 finder patterns
-  write_finder_pattern(QR_MATRIX_PADDING-1,QR_MATRIX_PADDING-1,matrix);
-  write_finder_pattern(QR_MATRIX_PADDING-1, QR_MATRIX_PADDING+version_size-FINDER_PATTERN_HEIGHT+1, matrix);
-  write_finder_pattern(QR_MATRIX_PADDING+version_size-FINDER_PATTERN_HEIGHT+1, QR_MATRIX_PADDING-1, matrix);
-
-  // BMP to paddings
-  write_rings(0,0,version_size+2*QR_MATRIX_PADDING,matrix,255, QR_MATRIX_PADDING);
-
-  // Set random black bit
-  matrix[QR_MATRIX_PADDING+version_size-FINDER_PATTERN_HEIGHT+1][QR_MATRIX_PADDING+FINDER_PATTERN_HEIGHT-1] = QR_MATRIX_BLACK_VALUE;
-
-  // Set timing patterns
-  uint8_t timer_len = version_size - 2*(FINDER_PATTERN_HEIGHT-1);
-  uint8_t timer_base = QR_MATRIX_PADDING + FINDER_PATTERN_HEIGHT - 3;
-  uint8_t timer_val = QR_MATRIX_BLACK_VALUE;
-  for (uint8_t i = 0; i < timer_len; i++) {
-    matrix[timer_base][timer_base + 2 + i] = timer_val;
-    matrix[timer_base + 2 + i][timer_base] = timer_val;
-    timer_val = REVERSE_QR_MATRIX_VAL(timer_val);
-  }
-
-  // Write alignment patterns
+static inline void write_alignment_patterns(uint8_t matrix[MAX_QR_MATRIX_SIZE][MAX_QR_MATRIX_SIZE], uint8_t version, uint8_t version_size) {
   if (version == 0)
     return;
 
@@ -70,4 +48,30 @@ void write_patterns(uint8_t matrix[MAX_QR_MATRIX_SIZE][MAX_QR_MATRIX_SIZE], uint
     }
     x -= ALIGNMENT_PATTERN_DIFFS[version];
   }
+}
+
+void write_patterns(uint8_t matrix[MAX_QR_MATRIX_SIZE][MAX_QR_MATRIX_SIZE], uint8_t version, uint8_t version_size) {
+  // Write the 3 finder patterns
+  write_finder_pattern(QR_MATRIX_PADDING-1,QR_MATRIX_PADDING-1,matrix);
+  write_finder_pattern(QR_MATRIX_PADDING-1, QR_MATRIX_PADDING+version_size-FINDER_PATTERN_HEIGHT+1, matrix);
+  write_finder_pattern(QR_MATRIX_PADDING+version_size-FINDER_PATTERN_HEIGHT+1, QR_MATRIX_PADDING-1, matrix);
+
+  // BMP to paddings
+  write_rings(0,0,version_size+2*QR_MATRIX_PADDING,matrix,255, QR_MATRIX_PADDING);
+
+  // Set random black bit
+  matrix[QR_MATRIX_PADDING+version_size-FINDER_PATTERN_HEIGHT+1][QR_MATRIX_PADDING+FINDER_PATTERN_HEIGHT-1] = QR_MATRIX_BLACK_VALUE;
+
+  // Set timing patterns
+  uint8_t timer_len = version_size - 2*(FINDER_PATTERN_HEIGHT-1);
+  uint8_t timer_base = QR_MATRIX_PADDING + FINDER_PATTERN_HEIGHT - 3;
+  uint8_t timer_val = QR_MATRIX_BLACK_VALUE;
+  for (uint8_t i = 0; i < timer_len; i++) {
+    matrix[timer_base][timer_base + 2 + i] = timer_val;
+    matrix[timer_base + 2 + i][timer_base] = timer_val;
+    timer_val = REVERSE_QR_MATRIX_VAL(timer_val);
+  }
+
+  // Write alignment patterns
+  write_alignment_patterns(matrix,version,version_size);
 }
