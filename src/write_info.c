@@ -57,8 +57,7 @@ void write_version_info(uint8_t matrix[MAX_QR_MATRIX_SIZE][MAX_QR_MATRIX_SIZE], 
 }
 
 void write_format_info(uint8_t matrix[MAX_QR_MATRIX_SIZE][MAX_QR_MATRIX_SIZE], enum ErrorCorrectionVersion ec, uint8_t version_size) {
-  // uint16_t format_info = generate_bch_code((ec << 3) + DEFAULT_DATA_MASK) ^ FORMAT_INFO_MASK;
-  uint16_t format_info = generate_bch_code(0b00101) ^ FORMAT_INFO_MASK;
+  uint16_t format_info = generate_bch_code((ec << 3) + DEFAULT_DATA_MASK) ^ FORMAT_INFO_MASK;
   
   // x for vertical, y for horizontal
   uint8_t const_coord = QR_MATRIX_PADDING + FINDER_PATTERN_HEIGHT - 1;
