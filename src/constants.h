@@ -76,7 +76,10 @@ extern const uint8_t ALIGNMENT_PATTERN_DIFFS[NUM_VERSIONS];
 #define QR_MATRIX_DEFAULT_VALUE (0)
 
 #define REVERSE_QR_MATRIX_VAL(val) (((val) + 6) % 4)
-#define BIT_TO_QR_MATRIX_VAL(val) (((val) * 2) + 1)
+
+// 0 -> 3 -> black
+// 1 -> 1 -> white
+#define BIT_TO_QR_MATRIX_VAL(val) ((!(val) * 2) + 1)
 
 // QR Code generator polynomial for (15, 5) BCH code
 // Polynomial: x^10 + x^8 + x^5 + x^4 + x^2 + x + 1
@@ -94,7 +97,8 @@ extern const uint8_t ALIGNMENT_PATTERN_DIFFS[NUM_VERSIONS];
 // Easiest one
 #define DEFAULT_DATA_MASK (0b001)
 
-#define MASK_DATA(val,y) ((val) ^ (y % 2 == 0))
+// Set equal to whatever the padding % 2 is since y is padding greater than one would expect
+#define MASK_DATA(val,y) (~(((val) ^ (((y) % 2) == (QR_MATRIX_PADDING % 2))) * 255))
 
 // BMP Constants
 #define BMP_HEADERS_LEN (14 + 40 + 8) 
