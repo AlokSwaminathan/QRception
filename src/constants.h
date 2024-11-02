@@ -77,9 +77,9 @@ extern const uint8_t ALIGNMENT_PATTERN_DIFFS[NUM_VERSIONS];
 
 #define REVERSE_QR_MATRIX_VAL(val) (((val) + 6) % 4)
 
-// 0 -> 3 -> black
-// 1 -> 1 -> white
-#define BIT_TO_QR_MATRIX_VAL(val) ((!(val) * 2) + 1)
+// 0 -> 1 -> white
+// 1 -> 3 -> black
+#define BIT_TO_QR_MATRIX_VAL(val) (((val) * 2) + 1)
 
 // QR Code generator polynomial for (15, 5) BCH code
 // Polynomial: x^10 + x^8 + x^5 + x^4 + x^2 + x + 1

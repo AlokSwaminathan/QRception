@@ -52,7 +52,7 @@ int main(int argc, char **argv, char **envp) {
 
   // Write white bytes here so if the QR symbol has extra space white will be written
   for (uint16_t i = 0; i < sizeof(res_bits); i++) {
-    res_bits[i] = 1;
+    res_bits[i] = 0;
   }
 
   get_full_codewords(err, codewords, res_bits);
