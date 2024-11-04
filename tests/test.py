@@ -56,13 +56,13 @@ def generate_bmp(executable: str, input: bytes):
         f.write(bmp)
 
 
-def test_executable(executable: str, input: bytes):
+def test_executable(executable: str, input: bytes) -> tuple[bool, bytes]:
     generate_bmp(executable, input)
     res = parse_bmp()
-    return res == input
+    return (res == input, res)
 
 
-def test(target: str, qr_version: int, ec_level: str):
+def test(target: str, qr_version: int, ec_level: str, show_data: bool):
     min_size = SIZES[qr_version - 1][ec_level] + 1
     max_size = SIZES[qr_version][ec_level]
 
@@ -82,15 +82,27 @@ def test(target: str, qr_version: int, ec_level: str):
     failure_str = f"{target_type}(FAILURE) {{}} data of length {{}} for version {qr_version} and error correction level {ec_level}"
     success_str = f"{target_type}(SUCCESS) {{}} data for version {qr_version} and error correction level {ec_level}"
 
-    if not test_executable(target, alphanum_data):
-        print(failure_str.format("alphanumeric", str(alphanum_data_len)))
-    else:
+    alphanum_success, alphanum_res = test_executable(target, alphanum_data)
+    byte_success, byte_res = test_executable(target, byte_data)
+
+    if alphanum_success:
         print(success_str.format("alphanumeric"))
-    if not test_executable(target, byte_data):
-        print(failure_str.format("byte", str(byte_data_len)))
     else:
+        print(failure_str.format("alphanumeric", str(alphanum_data_len)))
+        if show_data:
+            print(f"Input: {alphanum_data}")
+            print(f"Output: {alphanum_res}")
+    if byte_success:
         print(success_str.format("byte"))
+    else:
+        print(failure_str.format("byte", str(byte_data_len)))
+        if show_data:
+            print(f"Input: {byte_data}")
+            print(f"Output: {byte_res}")
+
     print()
+
+    return alphanum_success and byte_success
 
 
 def make():
@@ -107,7 +119,10 @@ def make():
 def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument("--debug", default=False, action="store_true")
-    return parser.parse_args().debug
+    parser.add_argument("--show-data", default=False, action="store_true")
+
+    args = parser.parse_args()
+    return (args.debug, args.show_data)
 
 
 def clean_up_files():
@@ -115,15 +130,16 @@ def clean_up_files():
     os.remove(TEMP_BMP_FILE)
 
 
-def main(debug: bool):
+def main(debug: bool, show_data: bool):
     make()
     target = DEBUG_TARGET if debug else TARGET
     target = os.path.join(PROJECT_ROOT, target)
     for version in range(1, MAX_VERSION + 1):
-        test(target, version, "L")
+        if not test(target, version, "L", show_data):
+            break
     clean_up_files()
 
 
 if __name__ == "__main__":
-    debug = parse_args()
-    main(debug)
+    debug, show_data = parse_args()
+    main(debug, show_data)
