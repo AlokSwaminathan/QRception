@@ -6,14 +6,14 @@
 #include "constants.h"
 
 // bits.c
-extern uint16_t write_bits(byte *arr, uint16_t curr_bit, uint16_t data, byte bits);
+extern uint16_t write_bits(uint8_t *arr, uint16_t curr_bit, uint16_t data, uint8_t bits);
 
 // bmp.c
 extern uint32_t matrix_to_bmp(uint8_t *bmp, uint8_t matrix[MAX_QR_MATRIX_SIZE][MAX_QR_MATRIX_SIZE], uint8_t version_size);
 
 // encode.c
-extern uint16_t calculate_total_size_and_get_switches(uint16_t *sizes, byte *data, uint16_t len, struct ModeSegment *segments);
-extern void encode_into_codewords(byte *data, struct Version version, byte *codewords, struct ModeSegment *segments, uint16_t segments_len);
+extern uint16_t calculate_total_size_and_get_switches(uint16_t *sizes, uint8_t *data, uint16_t len, struct ModeSegment *segments);
+extern void encode_into_codewords(uint8_t *data, struct Version version, uint8_t *codewords, struct ModeSegment *segments, uint16_t segments_len);
 
 // err.c
 extern struct ErrData get_err_data(struct Version version);
@@ -33,8 +33,8 @@ extern void gf_poly_div(uint8_t *res, uint8_t *dividend, uint8_t dividend_len, u
 extern int main(int argc, char **argv, char **envp);
 
 // mode.c
-extern enum Mode get_mode(byte c);
-extern byte ascii_to_alphanumeric(byte c);
+extern enum Mode get_mode(uint8_t c);
+extern uint8_t ascii_to_alphanumeric(uint8_t c);
 
 // symbols.c
 extern void write_patterns(uint8_t matrix[MAX_QR_MATRIX_SIZE][MAX_QR_MATRIX_SIZE], uint8_t version, uint8_t version_size);

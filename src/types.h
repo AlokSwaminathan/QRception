@@ -48,8 +48,6 @@ struct ErrData {
   uint8_t err_len;
 };
 
-typedef uint8_t byte;
-
-typedef uint16_t (*ModeEncoder)(byte*, uint16_t, byte*, uint16_t);
+typedef uint16_t (*ModeEncoder)(uint8_t*, uint16_t, uint8_t*, uint16_t);
 
 #endif

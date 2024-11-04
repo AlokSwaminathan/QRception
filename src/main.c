@@ -21,9 +21,9 @@
 int main(int argc, char **argv, char **envp) {
   if (argc < 2 || argc > 3)
     return 1;
-  byte *qr_data;
+  uint8_t *qr_data;
   uint16_t len = 0;
-  qr_data = (byte*)argv[1]; 
+  qr_data = (uint8_t*)argv[1]; 
   if (argc == 2){
     while (*(argv[1]++) != '\0')
       len++;
@@ -43,7 +43,7 @@ int main(int argc, char **argv, char **envp) {
     return 1;
   }
 
-  byte codewords[MAX_DATA_CODEWORDS];
+  uint8_t codewords[MAX_DATA_CODEWORDS];
   encode_into_codewords(qr_data, version, codewords, segments, segments_len);
 
   struct ErrData err = get_err_data(version);

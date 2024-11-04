@@ -3,7 +3,7 @@
 #include "types.h"
 
 // Returns new curr bit
-uint16_t encode_bytes(byte *data, uint16_t data_len, byte *codewords, uint16_t curr_bit) {
+uint16_t encode_bytes(uint8_t *data, uint16_t data_len, uint8_t *codewords, uint16_t curr_bit) {
   for (uint16_t i = 0; i < data_len; i++){
     curr_bit += write_bits(codewords, curr_bit, (uint32_t) data[i], BYTE_LEN_BITS); 
   }
@@ -11,7 +11,7 @@ uint16_t encode_bytes(byte *data, uint16_t data_len, byte *codewords, uint16_t c
 }
 
 // Returns new curr bit
-uint16_t encode_alphanumeric(byte *data, uint16_t data_len, byte *codewords, uint16_t curr_bit) {
+uint16_t encode_alphanumeric(uint8_t *data, uint16_t data_len, uint8_t *codewords, uint16_t curr_bit) {
   uint16_t alph_data = 0;
   uint8_t bits = ALPHANUMERIC_ONE_LEN_BITS;
   uint8_t incr = ALPHANUMERIC_TWO_LEN_BITS - ALPHANUMERIC_ONE_LEN_BITS;
@@ -31,7 +31,7 @@ uint16_t encode_alphanumeric(byte *data, uint16_t data_len, byte *codewords, uin
 }
 
 // Returns new curr bit
-uint16_t encode_numeric(byte *data, uint16_t data_len, byte *codewords, uint16_t curr_bit) {
+uint16_t encode_numeric(uint8_t *data, uint16_t data_len, uint8_t *codewords, uint16_t curr_bit) {
   uint16_t numeric_data = 0;
   uint8_t bits = NUMERIC_ONE_LEN_BITS;
   for (uint16_t i = 0; i < data_len; i++){
@@ -52,9 +52,9 @@ uint16_t encode_numeric(byte *data, uint16_t data_len, byte *codewords, uint16_t
 // Expects codewords to be len 2956
 // Returns number of bytes written (last byte padded to 0)
 // Version should be 1-3 in this case, representing a character count version
-void encode_into_codewords(byte *data, struct Version version, byte *codewords, struct ModeSegment *segments, uint16_t segments_len) {
+void encode_into_codewords(uint8_t *data, struct Version version, uint8_t *codewords, struct ModeSegment *segments, uint16_t segments_len) {
   // Current bit of codewords
-  byte extended_codewords[MAX_CODEWORDS * 8];
+  uint8_t extended_codewords[MAX_CODEWORDS * 8];
   uint16_t curr_bit = 0;
   struct ModeSegment seg;
 

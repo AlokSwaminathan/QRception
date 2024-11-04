@@ -58,13 +58,13 @@ enum SwitchMode should_switch(enum Mode curr_mode, enum Mode new_mode, uint16_t 
 // 2 - Versions 27-40
 // Writes in bytes
 // Returns number of segments
-uint16_t calculate_total_size_and_get_switches(uint16_t *sizes, byte *data, uint16_t len, struct ModeSegment *segments) {
+uint16_t calculate_total_size_and_get_switches(uint16_t *sizes, uint8_t *data, uint16_t len, struct ModeSegment *segments) {
   // 4 for terminator
   sizes[0] = 0;
   sizes[1] = 0;
   sizes[2] = 0;
   uint16_t old_sizes[3];
-  byte *curr = data;
+  uint8_t *curr = data;
   enum Mode curr_mode = get_mode(*curr);
   uint16_t match_streak = 1;
   uint16_t miss_streak = 0;

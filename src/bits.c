@@ -23,7 +23,7 @@ static inline uint32_t reverse_bytes(uint32_t data) {
 // Will always write <bit> bits
 // Returns number of bits written
 // One byte per bit
-uint16_t write_bits(byte *arr, uint16_t curr_bit, uint16_t data, byte bits){
+uint16_t write_bits(uint8_t *arr, uint16_t curr_bit, uint16_t data, uint8_t bits){
   for (uint8_t i = 0; i < bits; i++) {
     arr[curr_bit+(bits - i)-1] = data & (1 << i) ? 1 : 0;
   }
