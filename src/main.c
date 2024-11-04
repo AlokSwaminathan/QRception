@@ -1,6 +1,7 @@
 // Looks like including the .c file directly so gcc can make one .S file is more effective than merging separate ones
 // merge_asm still works even though it isnt merging anything anymore
 #include <asm/unistd_64.h>
+#include <fcntl.h>
 
 #include "func_table.h"
 #include "bits.c"
@@ -19,21 +20,29 @@
 #include "write_info.c"
 
 int main(int argc, char **argv, char **envp) {
-  if (argc < 2 || argc > 3)
-    return 1;
-  uint8_t *qr_data;
+  uint8_t qr_data[MAX_DATA_CODEWORDS];
   uint16_t len = 0;
-  qr_data = (uint8_t*)argv[1]; 
-  if (argc == 2){
-    while (*(argv[1]++) != '\0')
-      len++;
-  } else{
-    while (*(argv[2]++) != '\0')
-      len = len*10 + *(argv[2]-1) - '0';
+
+  // This is when the input is passed as a string
+  if (argc == 2) {
+    uint8_t *qr_curr = (uint8_t*)qr_data;
+    while (*argv[1] != '\0') {
+      *(qr_curr++) = *(argv[1]++); 
+    }
+    len = qr_curr - (uint8_t*) qr_data;
+  }
+  // This is if the input is a file path
+  else if (argc == 3) {
+    long fd = syscall3(__NR_open,(long)argv[2], O_RDONLY, 0);   
+    // No error checking, we don't have space for that
+    len = syscall3(__NR_read, fd, (long)qr_data, sizeof(qr_data));
+    syscall1(__NR_close, fd);
   }
 
-  uint16_t sizes[3];
+  // 3 different version splits where the mode sizes are different, so keeping those in mind is important to find the final size of the qr code bitstream
+  uint16_t sizes[DISTINCT_CHARACTER_COUNT_SIZES];
   struct ModeSegment segments[MAX_MODE_SEGMENTS];
+  
   uint16_t segments_len = calculate_total_size_and_get_switches(sizes, qr_data, len, segments);
 
   enum ErrorCorrectionVersion err_ver = EC_LOW;
