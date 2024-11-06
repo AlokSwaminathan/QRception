@@ -22,9 +22,7 @@ uint16_t encode_alphanumeric(uint8_t *data, uint16_t data_len, uint8_t *codeword
       alph_data = 0;
       bits = ALPHANUMERIC_ONE_LEN_BITS - incr;
     }
-    bits += incr;
-  }
-  if (alph_data) {
+    bits += incr; } if (alph_data) {
     curr_bit += write_bits(codewords, curr_bit, alph_data, bits - incr);
   }
   return curr_bit;
@@ -50,13 +48,11 @@ uint16_t encode_numeric(uint8_t *data, uint16_t data_len, uint8_t *codewords, ui
 }
 
 // Expects codewords to be len 2956
-// Returns number of bytes written (last byte padded to 0)
 // Version should be 1-3 in this case, representing a character count version
-void encode_into_codewords(uint8_t *data, struct Version version, uint8_t *codewords, struct ModeSegment *segments, uint16_t segments_len) {
+void encode_into_codewords(uint8_t *data, uint16_t data_len, enum Mode mode, struct Version version, uint8_t *codewords) {
   // Current bit of codewords
   uint8_t extended_codewords[MAX_CODEWORDS * 8];
   uint16_t curr_bit = 0;
-  struct ModeSegment seg;
 
   #pragma GCC diagnostic push
   #pragma GCC diagnostic ignored "-Wmaybe-uninitialized"
@@ -65,30 +61,29 @@ void encode_into_codewords(uint8_t *data, struct Version version, uint8_t *codew
   uint8_t cc_len_bits;
   uint8_t mode_indicator;
   ModeEncoder encoder;
-  for (uint16_t i = 0; i < segments_len; i++){
-    seg = segments[i]; 
-    switch (seg.mode) {
-    case NUM:
-      encoder = encode_numeric;
-      mode_indicator = NUMERIC_MODE_INDICATOR;
-      cc_len_bits = NUMERIC_CHARACTER_COUNT_LEN[version.cc_version];
-    break;
-    case ALPH_NUM:
-      encoder = encode_alphanumeric;
-      mode_indicator = ALPHANUMERIC_MODE_INDICATOR;
-      cc_len_bits = ALPHANUMERIC_CHARACTER_COUNT_LEN[version.cc_version];
-    break;
-    case BYTE:
-      encoder = encode_bytes;
-      mode_indicator = BYTE_MODE_INDICATOR;
-      cc_len_bits = BYTE_CHARACTER_COUNT_LEN[version.cc_version];
-    break;
-    }
-    curr_bit += write_bits(extended_codewords, curr_bit, (uint32_t) mode_indicator, MODE_INDICATOR_LEN_BITS);
-    curr_bit += write_bits(extended_codewords, curr_bit, (uint32_t) seg.len, cc_len_bits);
-    curr_bit = encoder(data, seg.len, extended_codewords, curr_bit);
-    data += seg.len;
+
+  switch (mode) {
+  case NUM:
+    encoder = encode_numeric;
+    mode_indicator = NUMERIC_MODE_INDICATOR;
+    cc_len_bits = NUMERIC_CHARACTER_COUNT_LEN[version.cc_version];
+  break;
+  case ALPH_NUM:
+    encoder = encode_alphanumeric;
+    mode_indicator = ALPHANUMERIC_MODE_INDICATOR;
+    cc_len_bits = ALPHANUMERIC_CHARACTER_COUNT_LEN[version.cc_version];
+  break;
+  case BYTE:
+    encoder = encode_bytes;
+    mode_indicator = BYTE_MODE_INDICATOR;
+    cc_len_bits = BYTE_CHARACTER_COUNT_LEN[version.cc_version];
+  break;
   }
+
+  curr_bit += write_bits(extended_codewords, curr_bit, (uint32_t) mode_indicator, MODE_INDICATOR_LEN_BITS);
+  curr_bit += write_bits(extended_codewords, curr_bit, (uint32_t) data_len, cc_len_bits);
+  curr_bit = encoder(data, data_len, extended_codewords, curr_bit);
+
   #pragma GCC diagnostic pop 
 
   curr_bit += write_bits(extended_codewords, curr_bit, TERMINATOR, MODE_INDICATOR_LEN_BITS);

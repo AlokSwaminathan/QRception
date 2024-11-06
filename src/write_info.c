@@ -2,7 +2,7 @@
 #include "constants.h"
 #include "types.h"
 
-void write_matrix(uint8_t matrix[MAX_QR_MATRIX_SIZE][MAX_QR_MATRIX_SIZE],uint8_t *codewords_bits, uint8_t codewords_len, uint8_t version_size) {
+void write_matrix(uint8_t matrix[MAX_QR_MATRIX_SIZE][MAX_QR_MATRIX_SIZE],uint8_t *codewords_bits, uint8_t version_size) {
   uint16_t curr_bit = 0;
   bool up = true;
   for (uint8_t x = QR_MATRIX_PADDING + version_size - 1; x > QR_MATRIX_PADDING - 1; x -= 2) {

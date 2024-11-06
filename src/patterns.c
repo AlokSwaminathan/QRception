@@ -23,7 +23,7 @@ void write_rings(uint8_t x, uint8_t y, uint8_t size, uint8_t matrix[MAX_QR_MATRI
 
 #define max_alignment_coord(version) (14 + 4*(version))
 
-static inline void write_alignment_patterns(uint8_t matrix[MAX_QR_MATRIX_SIZE][MAX_QR_MATRIX_SIZE], uint8_t version, uint8_t version_size) {
+static inline void write_alignment_patterns(uint8_t matrix[MAX_QR_MATRIX_SIZE][MAX_QR_MATRIX_SIZE], uint8_t version) {
   if (version == 0)
     return;
 
@@ -73,5 +73,5 @@ void write_patterns(uint8_t matrix[MAX_QR_MATRIX_SIZE][MAX_QR_MATRIX_SIZE], uint
   }
 
   // Write alignment patterns
-  write_alignment_patterns(matrix,version,version_size);
+  write_alignment_patterns(matrix,version);
 }

@@ -7,7 +7,8 @@
 enum Mode {
   NUM = 0,
   ALPH_NUM = 1,
-  BYTE = 2,
+  // Set up like this so xoring will lead to BYTE if BYTE ever shows up, which is what is intended
+  BYTE = 3,
 };
 
 enum SwitchMode {

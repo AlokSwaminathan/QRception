@@ -41,9 +41,9 @@ int main(int argc, char **argv, char **envp) {
 
   // 3 different version splits where the mode sizes are different, so keeping those in mind is important to find the final size of the qr code bitstream
   uint16_t sizes[DISTINCT_CHARACTER_COUNT_SIZES];
-  struct ModeSegment segments[MAX_MODE_SEGMENTS];
+  enum Mode mode = get_worst_mode(qr_data,len);
   
-  uint16_t segments_len = calculate_total_size_and_get_switches(sizes, qr_data, len, segments);
+  get_mode_specific_size(sizes, mode, len);
 
   enum ErrorCorrectionVersion err_ver = EC_LOW;
 
@@ -53,7 +53,7 @@ int main(int argc, char **argv, char **envp) {
   }
 
   uint8_t codewords[MAX_DATA_CODEWORDS];
-  encode_into_codewords(qr_data, version, codewords, segments, segments_len);
+  encode_into_codewords(qr_data, len, mode, version, codewords);
 
   struct ErrData err = get_err_data(version);
 
@@ -78,8 +78,7 @@ int main(int argc, char **argv, char **envp) {
 
   write_format_info(qr_matrix, err_ver, qr_matrix_size);
 
-  write_matrix(qr_matrix, res_bits, version.cw_capacity * 8, qr_matrix_size);
-
+  write_matrix(qr_matrix, res_bits, qr_matrix_size);
 
   uint8_t bmp[MAX_BMP_LEN] = {0};
 

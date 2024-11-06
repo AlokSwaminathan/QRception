@@ -69,11 +69,11 @@ void get_full_codewords(struct ErrData err_data, uint8_t* data, uint8_t *res) {
     curr = i;
     for (uint8_t j = 0; j < err_data.block_lens[0] && i < err_data.data_lens[0]; j++) {
       curr_res += write_bits(res, curr_res, data[curr], 8);
-      curr += err_data.block_lens[0];
+      curr += err_data.data_lens[0];
     } 
     for (uint8_t j = 0; j < err_data.block_lens[1]; j++) {
       curr_res += write_bits(res, curr_res, data[curr], 8);
-      curr += err_data.block_lens[1];
+      curr += err_data.data_lens[1];
     } 
   }
   for (uint8_t i = 0; i < err_data.err_len; i++) {

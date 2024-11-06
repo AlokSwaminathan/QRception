@@ -48,3 +48,11 @@ enum Mode get_mode(uint8_t c) {
   else
     return BYTE;
 }
+
+enum Mode get_worst_mode(uint8_t* data, uint16_t data_len) {
+  enum Mode mode = 0;
+  for (uint16_t i = 0; i < data_len; i++) {
+    mode |= get_mode(data[i]); 
+  }
+  return mode;
+}
