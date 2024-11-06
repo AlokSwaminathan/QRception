@@ -13,7 +13,7 @@ ALPHANUMERIC_CHARACTERS = rb"0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ $%*+-./:"
 
 TEST_ROOT = os.path.dirname(__file__)
 PROJECT_ROOT = os.path.dirname(TEST_ROOT)
-QR_PARSER = "/usr/bin/zbarimg"
+QR_PARSER = ["/usr/bin/zbarimg", "-Sbinary", "--raw"]
 TEMP_BMP_FILE = os.path.join(TEST_ROOT, "tmp.bmp")
 TEMP_DATA_FILE = os.path.join(TEST_ROOT, "data.tmp")
 
@@ -34,12 +34,8 @@ def random_alphanumeric(n: int) -> bytes:
 
 
 def parse_bmp() -> bytes:
-    parser_process = subprocess.run(
-        [QR_PARSER, "--raw", TEMP_BMP_FILE], capture_output=True
-    )
+    parser_process = subprocess.run(QR_PARSER + [TEMP_BMP_FILE], capture_output=True)
     result = parser_process.stdout
-    # Remove the 0x0a byte
-    result = result[:-1]
     return result
 
 
