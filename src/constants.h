@@ -94,11 +94,28 @@ extern const uint8_t ALIGNMENT_PATTERN_DIFFS[NUM_VERSIONS];
 // Mask for format info from BCH Code
 #define FORMAT_INFO_MASK (0b101010000010010)
 
-// Easiest one
-#define DEFAULT_DATA_MASK (0b001)
+// These are different data masks that can be commented and uncommented
+// x, y are each PADDING greater than would be expected
 
-// Set equal to whatever the padding % 2 is since y is padding greater than one would expect
-#define MASK_DATA(val,y) (~(((val) ^ (((y) % 2) == (QR_MATRIX_PADDING % 2))) * 255))
+// True mask is the real mask algorithm like (i + j) % 2 == 0 or something like that
+#define MASK_DATA(val,x,y) (~((val ^ TRUE_MASK(x,y)) * 255))
+#define MASK_COORD_CORRECT(coord) ((coord) - QR_MATRIX_PADDING)
+
+// #define DEFAULT_DATA_MASK (0b000)
+// #define TRUE_MASK(x,y) ((((y) + (x)) % 2) == !(QR_MATRIX_PADDING % 2))
+
+// #define DEFAULT_DATA_MASK (0b001)
+// #define TRUE_MASK(x,y) (((y) % 2) == (QR_MATRIX_PADDING % 2))
+
+// #define DEFAULT_DATA_MASK (0b100)
+// Helper macro
+// #define MASK_DIV(val,div) ((MASK_COORD_CORRECT(val))/(div))
+// #define TRUE_MASK(x,y) ((MASK_DIV(y,2) + MASK_DIV(x,3)) % 2 == 0)
+
+#define DEFAULT_DATA_MASK (0b111)
+#define TRUE_MASK1(x,y) ((MASK_COORD_CORRECT(x) + MASK_COORD_CORRECT(y)) % 2)
+#define TRUE_MASK2(x,y) ((MASK_COORD_CORRECT(x) * MASK_COORD_CORRECT(y)) % 3)
+#define TRUE_MASK(x,y) ((TRUE_MASK1(x,y) + TRUE_MASK2(x,y)) % 2 == 0)
 
 // BMP Constants
 #define BMP_HEADERS_LEN (14 + 40 + 8) 

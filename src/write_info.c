@@ -14,7 +14,7 @@ void write_matrix(uint8_t matrix[MAX_QR_MATRIX_SIZE][MAX_QR_MATRIX_SIZE],uint8_t
     for (uint8_t y = QR_MATRIX_PADDING + start; iters < version_size; y += diff, iters++) {
       if (matrix[y][x] == QR_MATRIX_DEFAULT_VALUE) {
         // Write BMP final value now to save time
-        matrix[y][x] = MASK_DATA(codewords_bits[curr_bit], y);
+        matrix[y][x] = MASK_DATA(codewords_bits[curr_bit], x, y);
         curr_bit++;
       } else {
         // Update to BMP final value
@@ -25,7 +25,7 @@ void write_matrix(uint8_t matrix[MAX_QR_MATRIX_SIZE][MAX_QR_MATRIX_SIZE],uint8_t
       // Somehow saves space, idk why the compiler can't do this
       uint8_t new_x = x - 1;
       if (matrix[y][new_x] == QR_MATRIX_DEFAULT_VALUE) {
-        matrix[y][new_x] = MASK_DATA(codewords_bits[curr_bit], y);
+        matrix[y][new_x] = MASK_DATA(codewords_bits[curr_bit], x-1, y);
         curr_bit++;
       } else {
         matrix[y][new_x] /= 2;
