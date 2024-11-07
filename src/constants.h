@@ -143,7 +143,8 @@ extern const uint8_t ALIGNMENT_PATTERN_DIFFS[NUM_VERSIONS];
 #define BMP_WIDTH_HEIGHT(version_size) (((uint16_t) BMP_PIXELS_PER_MODULE) * ((2 * QR_MATRIX_PADDING) + (version_size)))
 #define BMP_FILE_SIZE(width) (BMP_HEADERS_LEN + (((uint32_t) width * (uint32_t) width) / BMP_PIXELS_PER_MODULE))
 
-#define MAX_BMP_LEN (BMP_HEADERS_LEN + ((MAX_QR_MATRIX_SIZE * MAX_QR_MATRIX_SIZE) * (BMP_PIXELS_PER_MODULE)))
+// MAX * (MAX + 1) to account for padding
+#define MAX_BMP_LEN (BMP_HEADERS_LEN + ((MAX_QR_MATRIX_SIZE * (MAX_QR_MATRIX_SIZE + 1)) * (BMP_PIXELS_PER_MODULE)))
 
 #define BMP_FILE_HEADER_ONE (0x42)
 #define BMP_FILE_HEADER_TWO (0x4d)
