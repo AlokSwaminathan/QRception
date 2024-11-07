@@ -104,18 +104,32 @@ extern const uint8_t ALIGNMENT_PATTERN_DIFFS[NUM_VERSIONS];
 // #define DEFAULT_DATA_MASK (0b000)
 // #define TRUE_MASK(x,y) ((((y) + (x)) % 2) == !(QR_MATRIX_PADDING % 2))
 
-// #define DEFAULT_DATA_MASK (0b001)
-// #define TRUE_MASK(x,y) (((y) % 2) == (QR_MATRIX_PADDING % 2))
+#define DEFAULT_DATA_MASK (0b001)
+#define TRUE_MASK(x,y) (((y) % 2) == (QR_MATRIX_PADDING % 2))
+
+// #define DEFAULT_DATA_MASK (0b010)
+// #define TRUE_MASK(x,y) ((x) % 3 == (QR_MATRIX_PADDING % 3))
+
+// #define DEFAULT_DATA_MASK (0b011)
+// #define TRUE_MASK(x,y) ((MASK_COORD_CORRECT(x) + MASK_COORD_CORRECT(y)) % 3 == 0)
 
 // #define DEFAULT_DATA_MASK (0b100)
-// Helper macro
 // #define MASK_DIV(val,div) ((MASK_COORD_CORRECT(val))/(div))
 // #define TRUE_MASK(x,y) ((MASK_DIV(y,2) + MASK_DIV(x,3)) % 2 == 0)
 
-#define DEFAULT_DATA_MASK (0b111)
-#define TRUE_MASK1(x,y) ((MASK_COORD_CORRECT(x) + MASK_COORD_CORRECT(y)) % 2)
-#define TRUE_MASK2(x,y) ((MASK_COORD_CORRECT(x) * MASK_COORD_CORRECT(y)) % 3)
-#define TRUE_MASK(x,y) ((TRUE_MASK1(x,y) + TRUE_MASK2(x,y)) % 2 == 0)
+// Some general macros used for a few of these
+#define MASK_MUL_MOD2(x,y) ((MASK_COORD_CORRECT(x) * MASK_COORD_CORRECT(y)) % 2)
+#define MASK_MUL_MOD3(x,y) ((MASK_COORD_CORRECT(x) * MASK_COORD_CORRECT(y)) % 3)
+#define MASK_ADD_MOD2(x,y) ((MASK_COORD_CORRECT(x) + MASK_COORD_CORRECT(y)) % 2)
+
+// #define DEFAULT_DATA_MASK (0b101)
+// #define TRUE_MASK(x,y) ((MASK_MUL_MOD2(x,y) + MASK_MUL_MOD3(x,y)) == 0) 
+
+// #define DEFAULT_DATA_MASK (0b110)
+// #define TRUE_MASK(x,y) ((MASK_MUL_MOD2(x,y) + MASK_MUL_MOD3(x,y)) % 2 == 0) 
+
+// #define DEFAULT_DATA_MASK (0b111)
+// #define TRUE_MASK(x,y) ((MASK_ADD_MOD2(x,y) + MASK_MUL_MOD3(x,y)) % 2 == 0)
 
 // BMP Constants
 #define BMP_HEADERS_LEN (14 + 40 + 8) 
