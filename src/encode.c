@@ -88,9 +88,8 @@ void encode_into_codewords(uint8_t *data, uint16_t data_len, enum Mode mode, str
 
   curr_bit += write_bits(extended_codewords, curr_bit, TERMINATOR, MODE_INDICATOR_LEN_BITS);
 
-  if (curr_bit % 8 > 0){
-    curr_bit += write_bits(extended_codewords, curr_bit,0, 8);
-  }
+  curr_bit += write_bits(extended_codewords, curr_bit,0, 8);
+
   // Merge extended_codewords into normal one
   curr_bit /= 8;
   for (uint16_t i = 0; i < curr_bit; i++){
