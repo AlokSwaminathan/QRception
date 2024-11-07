@@ -34,7 +34,9 @@ def random_alphanumeric(n: int) -> bytes:
 
 
 def parse_bmp() -> bytes:
-    parser_process = subprocess.run(QR_PARSER + [TEMP_BMP_FILE], capture_output=True)
+    parser_process = subprocess.run(
+        QR_PARSER + [TEMP_BMP_FILE], capture_output=True, check=True
+    )
     result = parser_process.stdout
     return result
 
@@ -44,7 +46,7 @@ def generate_bmp(executable: str, input: bytes):
         f.write(input)
 
     generator_process = subprocess.run(
-        [executable, "", TEMP_DATA_FILE], capture_output=True
+        [executable, "", TEMP_DATA_FILE], capture_output=True, check=True
     )
     bmp = generator_process.stdout
 
@@ -133,7 +135,6 @@ def main(debug: bool, show_data: bool):
     for version in range(1, MAX_VERSION + 1):
         if not test(target, version, "L", show_data):
             break
-    clean_up_files()
 
 
 if __name__ == "__main__":
