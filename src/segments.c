@@ -27,7 +27,10 @@ void get_mode_specific_size(uint16_t *sizes, enum Mode mode, uint16_t len) {
   }
   for (uint8_t i = 0; i < DISTINCT_CHARACTER_COUNT_SIZES; i++) {
     sizes[i] = base_size + character_counts[i];
+    uint8_t full_byte = sizes[i] % 8 == 0;
     sizes[i] /= 8;
+    if (!full_byte)
+      sizes[i] += 1;
   }
   #pragma GCC diagnostic pop
 }
