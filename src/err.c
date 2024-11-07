@@ -55,7 +55,7 @@ void get_full_codewords(struct ErrData err_data, uint8_t* data, uint8_t *res) {
   
   uint16_t curr = 0;
   for (uint8_t i = 0; i < err_data.block_lens[0]; i++) {
-    rs_compute_codewords(&data[curr*i],err_data.data_lens[0], errs[i], err_data.err_len);
+    rs_compute_codewords(&data[curr],err_data.data_lens[0], errs[i], err_data.err_len);
     curr += err_data.data_lens[0];
   }
   
