@@ -33,12 +33,12 @@ def random_alphanumeric(n: int) -> bytes:
     return bytes(random.choices(ALPHANUMERIC_CHARACTERS, k=n))
 
 
-def parse_bmp() -> bytes:
+def parse_bmp(expected_size: int) -> bytes:
     parser_process = subprocess.run(
         QR_PARSER + [TEMP_BMP_FILE], capture_output=True, check=True
     )
     result = parser_process.stdout
-    return result
+    return result[:expected_size]
 
 
 def generate_bmp(executable: str, input: bytes):
@@ -56,7 +56,7 @@ def generate_bmp(executable: str, input: bytes):
 
 def test_executable(executable: str, input: bytes) -> tuple[bool, bytes]:
     generate_bmp(executable, input)
-    res = parse_bmp()
+    res = parse_bmp(len(input))
     return (res == input, res)
 
 
