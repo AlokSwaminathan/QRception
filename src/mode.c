@@ -1,6 +1,5 @@
 #include "types.h"
 #include "func_table.h"
-
 uint8_t ascii_to_alphanumeric(uint8_t c) {
   if (c >= 0x30 && c <= 0x39)
     return c - '0';
