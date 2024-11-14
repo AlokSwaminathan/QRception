@@ -4,3 +4,4 @@ build/
 *.out
 qr_generator
 tests/*tmp*
+*/__pycache__
