@@ -1,28 +1,9 @@
 import argparse
 import subprocess
 import os
-import json
 import random
-
-
-MAX_VERSION = 40
-EC_LEVELS = ["L", "M", "Q", "H"]
-EXTRA_BYTES_PER_MODE = 3
-
-ALPHANUMERIC_CHARACTERS = rb"0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ $%*+-./:"
-
-TEST_ROOT = os.path.dirname(__file__)
-PROJECT_ROOT = os.path.dirname(TEST_ROOT)
-QR_PARSER = ["/usr/bin/zbarimg", "-Sbinary", "--raw"]
-TEMP_BMP_FILE = os.path.join(TEST_ROOT, "tmp.bmp")
-TEMP_DATA_FILE = os.path.join(TEST_ROOT, "data.tmp")
-
-# Paths relative to project root
-TARGET = "qr_generator"
-DEBUG_TARGET = "build/debug/qr_generator"
-
-with open(os.path.join(TEST_ROOT, "max_data_codewords.json"), mode="r") as f:
-    SIZES = json.load(f)
+from constants import *
+from util import make, generate_bmp
 
 
 def random_bytes(n: int) -> bytes:
@@ -39,19 +20,6 @@ def parse_bmp(expected_size: int) -> bytes:
     )
     result = parser_process.stdout
     return result[:expected_size]
-
-
-def generate_bmp(executable: str, input: bytes):
-    with open(TEMP_DATA_FILE, "wb") as f:
-        f.write(input)
-
-    generator_process = subprocess.run(
-        [executable, "", TEMP_DATA_FILE], capture_output=True, check=True
-    )
-    bmp = generator_process.stdout
-
-    with open(TEMP_BMP_FILE, "wb") as f:
-        f.write(bmp)
 
 
 def test_executable(executable: str, input: bytes) -> tuple[bool, bytes]:
@@ -101,17 +69,6 @@ def test(target: str, qr_version: int, ec_level: str, show_data: bool):
     print()
 
     return alphanum_success and byte_success
-
-
-def make():
-    make_process = subprocess.run(["make", "-C", PROJECT_ROOT], capture_output=True)
-    ret_code = make_process.returncode
-    if ret_code != 0:
-        print(f"Make failed with a return code of {ret_code}")
-        print(f"Stdout:\n{make_process.stdout}")
-        print(f"Stderr:\n{make_process.stderr}")
-    else:
-        print("Sucessfully compiled executables")
 
 
 def parse_args():

@@ -1,0 +1,3 @@
+segno
+pillow
+numpy
