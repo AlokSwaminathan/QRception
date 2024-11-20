@@ -1,15 +1,17 @@
 .DEFAULT_GOAL := all
 
 CC := gcc
-CFLAGS := -Wall -Wextra -masm=intel -Oz -fno-builtin -nostdlib -nostartfiles -fno-stack-protector
+CFLAGS := -Wall -Wextra -Oz -fno-builtin -nostdlib -nostartfiles -fno-stack-protector
 DBG_CFLAGS := -Wall -Wextra -O0 -g
+
+OBJCONV := ./objconv
+OBJCONV_FLAGS := -fnasm
 
 SRCDIR := src
 BUILDDIR := build
 DBGDIR := $(BUILDDIR)/debug
 
 BUILD_SCRIPT := merge_asm.py
-ELF_TEMPLATE := elf_template.asm
 ENTRYPOINT := main
 
 WATCHED_FILES := $(shell find $(SRCDIR) -name '*.c')
@@ -27,7 +29,6 @@ FULL_ELF_ASM := $(BUILDDIR)/$(TARGET).asm
 $(FULL_ELF_ASM) : $(SRCASMS)
 	python3 $(BUILD_SCRIPT) $(SRCASMS)\
 		--entrypoint $(ENTRYPOINT)\
-		--elf-template $(ELF_TEMPLATE)\
 		--output $(FULL_ELF_ASM)
 
 $(TARGET) : $(FULL_ELF_ASM)
@@ -41,9 +42,13 @@ $(PREPROCESSED_TARGET) : $(SRCS) $(WATCHED_FILES)
 $(TARGET_OBJ) : $(FULL_ELF_ASM)
 	nasm -f elf64 -o $(TARGET_OBJ) $(FULL_ELF_ASM)
 
-$(BUILDDIR)/%.s : $(SRCDIR)/%.c $(WATCHED_FILES)
+$(BUILDDIR)/%.o : $(SRCDIR)/%.c $(WATCHED_FILES)
 	@mkdir -p $(BUILDDIR)
-	$(CC) $(CFLAGS) -S $< -o $@
+	$(CC) $(CFLAGS) -s -c $< -o $@
+
+$(BUILDDIR)/%.s : $(BUILDDIR)/%.o
+	@mkdir -p $(BUILDDIR)
+	$(OBJCONV) $(OBJCONV_FLAGS) $< -o $@
 
 $(DBG_TARGET) : $(DBGOBJS)
 	@mkdir -p $(DBGDIR)
