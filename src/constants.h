@@ -104,14 +104,14 @@ extern const uint8_t ALIGNMENT_PATTERN_DIFFS[NUM_VERSIONS];
 // #define DEFAULT_DATA_MASK (0b000)
 // #define TRUE_MASK(x,y) ((((y) + (x)) % 2) == !(QR_MATRIX_PADDING % 2))
 
-// #define DEFAULT_DATA_MASK (0b001)
-// #define TRUE_MASK(x,y) (((y) % 2) == (QR_MATRIX_PADDING % 2))
+#define DEFAULT_DATA_MASK (0b001)
+#define TRUE_MASK(x,y) (((y) % 2) == (QR_MATRIX_PADDING % 2))
 
 // #define DEFAULT_DATA_MASK (0b010)
 // #define TRUE_MASK(x,y) ((x) % 3 == (QR_MATRIX_PADDING % 3))
 
-#define DEFAULT_DATA_MASK (0b011)
-#define TRUE_MASK(x,y) ((MASK_COORD_CORRECT(x) + MASK_COORD_CORRECT(y)) % 3 == 0)
+// #define DEFAULT_DATA_MASK (0b011)
+// #define TRUE_MASK(x,y) ((MASK_COORD_CORRECT(x) + MASK_COORD_CORRECT(y)) % 3 == 0)
 
 // #define DEFAULT_DATA_MASK (0b100)
 // #define MASK_DIV(val,div) ((MASK_COORD_CORRECT(val))/(div))
