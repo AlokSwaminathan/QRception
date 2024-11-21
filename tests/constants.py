@@ -5,8 +5,8 @@ TEST_ROOT = os.path.dirname(__file__)
 PROJECT_ROOT = os.path.dirname(TEST_ROOT)
 
 # Paths relative to project root
-TARGET = "qr_generator"
-DEBUG_TARGET = "build/debug/qr_generator"
+TARGET = os.path.join(PROJECT_ROOT, "qr_generator")
+DEBUG_TARGET = os.path.join(PROJECT_ROOT, "build/debug/qr_generator")
 
 TEMP_BMP_FILE = os.path.join(TEST_ROOT, "tmp.bmp")
 TEMP_SVG_FILE = os.path.join(TEST_ROOT, "tmp.svg")
