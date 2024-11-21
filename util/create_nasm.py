@@ -1,12 +1,12 @@
 import argparse
-import os
+from os import path
 import re
 import sys
-from typing import List, Tuple
+from typing import Tuple
 
 TAB_LENGTH = 2
 
-TEMPLATE_ELF_FILE = os.path.join(os.path.dirname(__file__), "elf_template.asm")
+TEMPLATE_ELF_FILE = path.join(path.dirname(__file__), "elf_template.asm")
 
 with open(TEMPLATE_ELF_FILE, mode="r") as f:
     template_elf_asm = f.read()
@@ -37,7 +37,7 @@ def parse_args() -> Tuple[str, str, str]:
         error = True
 
     objconv_asm = ""
-    if not os.path.exists(objconv_asm_path):
+    if not path.exists(objconv_asm_path):
         print(f'objconv generated ASM file "{objconv_asm_path}" doesn\'t exist')
         error = True
     else:
@@ -72,7 +72,6 @@ def integrate_template(asm, entrypoint):
 def main():
     objconv_asm, entrypoint, output_file = parse_args()
     final_asm = strip_elf64_data(objconv_asm)
-    print(final_asm)
     final_asm = integrate_template(final_asm, entrypoint)
 
     with open(output_file, mode="w") as o:

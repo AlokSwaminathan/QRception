@@ -4,14 +4,13 @@ CC := gcc
 CFLAGS := -Wall -Wextra -Oz -fno-builtin -nostdlib -nostartfiles -fno-stack-protector
 DBG_CFLAGS := -Wall -Wextra -O0 -g
 
-OBJCONV := ./objconv
+OBJCONV := ./util/objconv
 OBJCONV_FLAGS := -fnasm
 
 SRCDIR := src
 BUILDDIR := build
 DBGDIR := $(BUILDDIR)/debug
 
-BUILD_SCRIPT := merge_asm.py
 ENTRYPOINT := main
 
 WATCHED_FILES := $(shell find $(SRCDIR) -name '*.c')
@@ -27,7 +26,7 @@ PREPROCESSED_TARGET := $(BUILDDIR)/qr_generator.E
 FULL_ELF_ASM := $(BUILDDIR)/$(TARGET).asm
 
 $(FULL_ELF_ASM) : $(SRCASMS)
-	python3 $(BUILD_SCRIPT) $(SRCASMS)\
+	python3 util/create_nasm.py $(SRCASMS)\
 		--entrypoint $(ENTRYPOINT)\
 		--output $(FULL_ELF_ASM)
 
@@ -69,7 +68,7 @@ debug: $(DBG_TARGET)
 final: $(TARGET)
 
 symbol_sizes: $(TARGET_OBJ) $(TARGET)
-	@python3 symbol_size.py "$$(nm -n $(TARGET_OBJ))" --file-size $$(stat -c %s $(TARGET))
+	@python3 util/symbol_size.py "$$(nm -n $(TARGET_OBJ))" --file-size $$(stat -c %s $(TARGET))
 
 size: $(TARGET)
 	@echo "Binary has size $$(stat -c %s $(TARGET)) bytes"
