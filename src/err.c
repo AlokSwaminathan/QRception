@@ -67,8 +67,9 @@ void get_full_codewords(struct ErrData err_data, uint8_t* data, uint8_t *res) {
   uint16_t curr_res = 0;
   for (uint8_t i = 0; i < err_data.data_lens[1]; i++) {
     curr = i;
-    for (uint8_t j = 0; j < err_data.block_lens[0] && i < err_data.data_lens[0]; j++) {
-      curr_res += write_bits(res, curr_res, data[curr], 8);
+    for (uint8_t j = 0; j < err_data.block_lens[0]; j++) {
+      // Multiply by truthy value if data is in range of the block, otherwise writing 0 and nothing happens
+      curr_res += write_bits(res, curr_res, data[curr], 8 * (i < err_data.data_lens[0]));
       curr += err_data.data_lens[0];
     } 
     for (uint8_t j = 0; j < err_data.block_lens[1]; j++) {
