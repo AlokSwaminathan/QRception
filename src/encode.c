@@ -22,7 +22,9 @@ uint16_t encode_alphanumeric(uint8_t *data, uint16_t data_len, uint8_t *codeword
       alph_data = 0;
       bits = ALPHANUMERIC_ONE_LEN_BITS - incr;
     }
-    bits += incr; } if (alph_data) {
+    bits += incr; 
+  } 
+  if (data_len % 2) {
     curr_bit += write_bits(codewords, curr_bit, alph_data, bits - incr);
   }
   return curr_bit;
