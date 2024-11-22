@@ -2,10 +2,9 @@ import argparse
 from PIL import Image
 import numpy as np
 import segno
-from segno.consts import ALPHANUMERIC_CHARS
 
 from constants import *
-from util import make, generate_bmp
+from util import make, generate_bmp, get_encoding
 
 
 def load_bmp_as_matrix(bmp_file):
@@ -50,9 +49,7 @@ def get_bmp_matrix(debug, data):
 
 
 def get_segno_matrix(data):
-    encoding = (
-        "alphanumeric" if all([c in ALPHANUMERIC_CHARS for c in data]) else "bytes"
-    )
+    encoding = get_encoding(data)
     qr = segno.make_qr(
         content=data,
         error=DEFAULT_ERROR,
@@ -118,6 +115,8 @@ def main():
         print("Coordinates of differing bits:")
         for coord in diff_coords:
             print(f"(x={coord[1]}, y={coord[0]})")
+
+    print(f"Number of differing bits: {differences}")
 
 
 if __name__ == "__main__":

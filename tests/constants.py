@@ -28,6 +28,6 @@ with open(os.path.join(TEST_ROOT, "max_data_codewords.json"), mode="r") as f:
 BMP_PADDING_SIZE = 3
 BMP_BLOCK_SIZE = 8
 
-QR_MASK = 0b11
+QR_MASK = 0b01
 
 DEFAULT_ERROR = EC_LEVELS[0]
