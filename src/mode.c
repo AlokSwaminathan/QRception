@@ -1,9 +1,9 @@
 #include "types.h"
 #include "func_table.h"
 uint8_t ascii_to_alphanumeric(uint8_t c) {
-  if (c >= 0x30 && c <= 0x39)
+  if (c >= '0' && c <= '9')
     return c - '0';
-  else if (c >= 0x41 && c <= 0x5a)
+  else if (c >= 'A' && c <= 'Z')
     return c + 10 - 'A';
   switch (c) {
   case ':':
@@ -40,9 +40,9 @@ uint8_t ascii_to_alphanumeric(uint8_t c) {
 }
 
 enum Mode get_mode(uint8_t c) {
-  if (c >= 0x30 && c <= 0x39)
+  if (c >= '0' && c <= '9')
     return NUM;
-  else if (c == 0x20 || c == 0x24 || c == 0x25 || c == 0x2a || c == 0x2b || (c >= 0x2d && c <= 0x2f) || c == 0x3a || (c >= 0x41 && c <= 0x5a))
+  else if (c == ' ' || c == '$' || c == '%' || c == '*' || c == '+' || (c >= '-' && c <= '/') || c == ':' || (c >= 'A' && c <= 'Z'))
     return ALPH_NUM;
   else
     return BYTE;
