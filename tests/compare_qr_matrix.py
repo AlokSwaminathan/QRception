@@ -1,5 +1,4 @@
 import argparse
-from sys import base_prefix
 from PIL import Image
 import numpy as np
 import segno
@@ -114,6 +113,8 @@ def main():
         print(f"Number of differing bits: {differences}")
 
         diff_coords = np.argwhere(bmp_matrix != segno_matrix)
+        diff_coords = diff_coords[np.lexsort((diff_coords[:, 0], diff_coords[:, 1]))]
+
         print("Coordinates of differing bits:")
         for coord in diff_coords:
             print(f"(x={coord[1]}, y={coord[0]})")
