@@ -1,4 +1,5 @@
 import argparse
+from sys import executable
 from PIL import Image
 import numpy as np
 import segno
@@ -38,8 +39,7 @@ def convert_bmp_blocks_to_bits(matrix):
     return bit_matrix
 
 
-def get_bmp_matrix(debug, data):
-    executable = TARGET if not debug else DEBUG_TARGET
+def get_bmp_matrix(executable, data):
     make()
     generate_bmp(executable, data)
     bmp_matrix = load_bmp_as_matrix(TEMP_BMP_FILE)
@@ -69,7 +69,10 @@ def parse_args():
     parser = argparse.ArgumentParser(
         description="Compare segno QR code with generated QR code"
     )
-    parser.add_argument(
+
+    executable_group = parser.add_mutually_exclusive_group(required=False)
+    executable_group.add_argument("--executable", help="Custom executable to run")
+    executable_group.add_argument(
         "--debug", default=False, action="store_true", help="Use debug executable"
     )
 
@@ -79,19 +82,30 @@ def parse_args():
 
     args = parser.parse_args()
 
+    executable = None
+    if args.executable:
+        executable = os.path.join(os.getcwd(), args.executable)
+        if not os.path.exists(executable):
+            print(f"Executable \"{executable} doesn't exist")
+            exit(1)
+    elif args.debug:
+        executable = DEBUG_TARGET
+    elif not executable:
+        executable = TARGET
+
     if not args.data:
         with open(args.file, "rb") as f:
             args.data = f.read()
     else:
         args.data = bytes(args.data, encoding="ascii")
 
-    return args.debug, args.data
+    return executable, args.data
 
 
 def main():
-    debug, data = parse_args()
+    executable, data = parse_args()
 
-    bmp_matrix = get_bmp_matrix(debug, data)
+    bmp_matrix = get_bmp_matrix(executable, data)
     segno_matrix = get_segno_matrix(data)
 
     print(f"Dimensions of BMP matrix: {bmp_matrix.shape}")

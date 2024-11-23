@@ -73,11 +73,28 @@ def test(target: str, qr_version: int, ec_level: str, show_data: bool):
 
 def parse_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--debug", default=False, action="store_true")
     parser.add_argument("--show-data", default=False, action="store_true")
 
+    executable_group = parser.add_mutually_exclusive_group(required=False)
+    executable_group.add_argument("--executable", help="Custom executable to run")
+    executable_group.add_argument(
+        "--debug", default=False, action="store_true", help="Use debug executable"
+    )
+
     args = parser.parse_args()
-    return (args.debug, args.show_data)
+
+    executable = None
+    if args.executable:
+        executable = os.path.join(os.getcwd(), args.executable)
+        if not os.path.exists(executable):
+            print(f"Executable \"{executable} doesn't exist")
+            exit(1)
+    elif args.debug:
+        executable = DEBUG_TARGET
+    elif not executable:
+        executable = TARGET
+
+    return (executable, args.show_data)
 
 
 def clean_up_files():
@@ -85,15 +102,13 @@ def clean_up_files():
     os.remove(TEMP_BMP_FILE)
 
 
-def main(debug: bool, show_data: bool):
+def main(executable: str, show_data: bool):
     make()
-    target = DEBUG_TARGET if debug else TARGET
-    target = os.path.join(PROJECT_ROOT, target)
     for version in range(1, MAX_VERSION + 1):
-        if not test(target, version, "L", show_data):
+        if not test(executable, version, "L", show_data):
             break
 
 
 if __name__ == "__main__":
-    debug, show_data = parse_args()
-    main(debug, show_data)
+    executable, show_data = parse_args()
+    main(executable, show_data)
