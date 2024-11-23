@@ -30,12 +30,12 @@
 #define MAX_MODE_SEGMENTS (1000)
 
 // From QR Spec (2956) with some extra bytes since the bit insertion might write over
-#define MAX_DATA_CODEWORDS (2956+10)
-#define MAX_CODEWORDS (3706+10)
+#define MAX_DATA_CODEWORDS (2956 + 10)
+#define MAX_CODEWORDS (3706 + 10)
 #define MAX_CODEWORDS_BITS (MAX_CODEWORDS * 8)
 
 #define QR_MATRIX_PADDING (3)
-#define MAX_QR_MATRIX_SIZE (177 + 2*(QR_MATRIX_PADDING))
+#define MAX_QR_MATRIX_SIZE (177 + 2 * (QR_MATRIX_PADDING))
 
 #define FINDER_PATTERN_HEIGHT (9)
 #define ALIGNMENT_PATTERN_HEIGHT (5)
@@ -103,14 +103,14 @@ extern const uint8_t ALIGNMENT_PATTERN_DIFFS[NUM_VERSIONS];
 // x, y are each PADDING greater than would be expected
 
 // True mask is the real mask algorithm like (i + j) % 2 == 0 or something like that
-#define MASK_DATA(val,x,y) (~((val ^ TRUE_MASK(x,y)) * 255))
+#define MASK_DATA(val, x, y) (~((val ^ TRUE_MASK(x, y)) * 255))
 #define MASK_COORD_CORRECT(coord) ((coord) - QR_MATRIX_PADDING)
 
 // #define DEFAULT_DATA_MASK (0b000)
 // #define TRUE_MASK(x,y) ((((y) + (x)) % 2) == !(QR_MATRIX_PADDING % 2))
 
 #define DEFAULT_DATA_MASK (0b001)
-#define TRUE_MASK(x,y) (((y) % 2) == (QR_MATRIX_PADDING % 2))
+#define TRUE_MASK(x, y) (((y) % 2) == (QR_MATRIX_PADDING % 2))
 
 // #define DEFAULT_DATA_MASK (0b010)
 // #define TRUE_MASK(x,y) ((x) % 3 == (QR_MATRIX_PADDING % 3))
@@ -123,21 +123,21 @@ extern const uint8_t ALIGNMENT_PATTERN_DIFFS[NUM_VERSIONS];
 // #define TRUE_MASK(x,y) ((MASK_DIV(y,2) + MASK_DIV(x,3)) % 2 == 0)
 
 // Some general macros used for a few of these
-#define MASK_MUL_MOD2(x,y) ((MASK_COORD_CORRECT(x) * MASK_COORD_CORRECT(y)) % 2)
-#define MASK_MUL_MOD3(x,y) ((MASK_COORD_CORRECT(x) * MASK_COORD_CORRECT(y)) % 3)
-#define MASK_ADD_MOD2(x,y) ((MASK_COORD_CORRECT(x) + MASK_COORD_CORRECT(y)) % 2)
+#define MASK_MUL_MOD2(x, y) ((MASK_COORD_CORRECT(x) * MASK_COORD_CORRECT(y)) % 2)
+#define MASK_MUL_MOD3(x, y) ((MASK_COORD_CORRECT(x) * MASK_COORD_CORRECT(y)) % 3)
+#define MASK_ADD_MOD2(x, y) ((MASK_COORD_CORRECT(x) + MASK_COORD_CORRECT(y)) % 2)
 
 // #define DEFAULT_DATA_MASK (0b101)
-// #define TRUE_MASK(x,y) ((MASK_MUL_MOD2(x,y) + MASK_MUL_MOD3(x,y)) == 0) 
+// #define TRUE_MASK(x,y) ((MASK_MUL_MOD2(x,y) + MASK_MUL_MOD3(x,y)) == 0)
 
 // #define DEFAULT_DATA_MASK (0b110)
-// #define TRUE_MASK(x,y) ((MASK_MUL_MOD2(x,y) + MASK_MUL_MOD3(x,y)) % 2 == 0) 
+// #define TRUE_MASK(x,y) ((MASK_MUL_MOD2(x,y) + MASK_MUL_MOD3(x,y)) % 2 == 0)
 
 // #define DEFAULT_DATA_MASK (0b111)
 // #define TRUE_MASK(x,y) ((MASK_ADD_MOD2(x,y) + MASK_MUL_MOD3(x,y)) % 2 == 0)
 
 // BMP Constants
-#define BMP_HEADERS_LEN (14 + 40 + 8) 
+#define BMP_HEADERS_LEN (14 + 40 + 8)
 
 // 8 since 8 bits in a byte so easier to set up
 #define BMP_PIXELS_PER_MODULE (8)
@@ -145,8 +145,8 @@ extern const uint8_t ALIGNMENT_PATTERN_DIFFS[NUM_VERSIONS];
 // 72 ppi, don't think it  matters but this is the "default"
 #define BMP_PIXELS_PER_METER (2835)
 
-#define BMP_WIDTH_HEIGHT(version_size) (((uint16_t) BMP_PIXELS_PER_MODULE) * ((2 * QR_MATRIX_PADDING) + (version_size)))
-#define BMP_FILE_SIZE(width) (BMP_HEADERS_LEN + (((uint32_t) width * (uint32_t) width) / BMP_PIXELS_PER_MODULE))
+#define BMP_WIDTH_HEIGHT(version_size) (((uint16_t)BMP_PIXELS_PER_MODULE) * ((2 * QR_MATRIX_PADDING) + (version_size)))
+#define BMP_FILE_SIZE(width) (BMP_HEADERS_LEN + (((uint32_t)width * (uint32_t)width) / BMP_PIXELS_PER_MODULE))
 
 // MAX * (MAX + 1) to account for padding
 #define MAX_BMP_LEN (BMP_HEADERS_LEN + ((MAX_QR_MATRIX_SIZE * (MAX_QR_MATRIX_SIZE + 1)) * (BMP_PIXELS_PER_MODULE)))

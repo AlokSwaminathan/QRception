@@ -2,8 +2,8 @@
 #define TYPES
 
 #include "constants.h"
-#include <stdint.h>
 #include <stdbool.h>
+#include <stdint.h>
 
 enum Mode {
   NUM = 0,

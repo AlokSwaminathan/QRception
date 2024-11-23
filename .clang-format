@@ -1,3 +1,6 @@
-ColumnLimit: 100
-PenaltyBreakBeforeFirstCallParameter: 10000
-PenaltyBreakFunctionDeclaration: 10000
+---
+Language: Cpp
+BasedOnStyle: LLVM
+ColumnLimit: 200
+ReflowComments: false
+...

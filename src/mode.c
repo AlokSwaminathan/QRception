@@ -1,5 +1,5 @@
-#include "types.h"
 #include "func_table.h"
+#include "types.h"
 
 uint8_t ascii_to_alphanumeric(uint8_t c) {
   if (c >= '0' && c <= '9')
@@ -53,7 +53,7 @@ enum Mode get_mode(uint8_t c) {
 enum Mode get_worst_mode(const uint8_t data[MAX_DATA_CODEWORDS], const uint16_t data_len) {
   enum Mode mode = 0;
   for (uint16_t i = 0; i < data_len; i++) {
-    mode |= get_mode(data[i]); 
+    mode |= get_mode(data[i]);
   }
   return mode;
 }

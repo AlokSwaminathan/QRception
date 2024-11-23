@@ -1,9 +1,9 @@
 #ifndef FUNC_TABLE
 #define FUNC_TABLE
 
+#include "constants.h"
 #include "syscalls.h"
 #include "types.h"
-#include "constants.h"
 
 // bits.c
 uint16_t write_bits(uint8_t *arr, const uint16_t curr_bit, const uint16_t data, const uint8_t bits);

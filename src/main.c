@@ -3,13 +3,13 @@
 #include <asm/unistd_64.h>
 #include <fcntl.h>
 
-#include "func_table.h"
 #include "bits.c"
 #include "bmp.c"
 #include "constants.c"
 #include "constants.h"
 #include "encode.c"
 #include "err.c"
+#include "func_table.h"
 #include "galois_field.c"
 #include "mode.c"
 #include "patterns.c"
@@ -25,15 +25,15 @@ int main(int argc, char **argv, char **envp) {
 
   // This is when the input is passed as a string
   if (argc == 2) {
-    uint8_t *qr_curr = (uint8_t*)qr_data;
+    uint8_t *qr_curr = (uint8_t *)qr_data;
     while (*argv[1] != '\0') {
-      *(qr_curr++) = *(argv[1]++); 
+      *(qr_curr++) = *(argv[1]++);
     }
-    len = qr_curr - (uint8_t*) qr_data;
+    len = qr_curr - (uint8_t *)qr_data;
   }
   // This is if the input is a file path
   else if (argc == 3) {
-    long fd = syscall3(__NR_open,(long)argv[2], O_RDONLY, 0);   
+    long fd = syscall3(__NR_open, (long)argv[2], O_RDONLY, 0);
     // No error checking, we don't have space for that
     len = syscall3(__NR_read, fd, (long)qr_data, sizeof(qr_data));
     syscall1(__NR_close, fd);
@@ -41,13 +41,13 @@ int main(int argc, char **argv, char **envp) {
 
   // 3 different version splits where the mode size lengths are different, so keeping those in mind is important to find the final size of the qr code bitstream
   uint16_t sizes[DISTINCT_CHARACTER_COUNT_SIZES];
-  const enum Mode mode = get_worst_mode(qr_data,len);
-  
+  const enum Mode mode = get_worst_mode(qr_data, len);
+
   get_mode_specific_size(sizes, mode, len);
 
   const enum ErrorCorrectionVersion err_ver = EC_LOW;
 
-  const struct Version version = get_smallest_version(sizes,err_ver) ;
+  const struct Version version = get_smallest_version(sizes, err_ver);
 
   // 255 is the return value if there is no valid version found
   if (version.version == 255) {
@@ -69,10 +69,10 @@ int main(int argc, char **argv, char **envp) {
   get_full_codewords(err, codewords, res_bits);
 
   uint8_t qr_matrix[MAX_QR_MATRIX_SIZE][MAX_QR_MATRIX_SIZE] = {0};
-  
+
   uint8_t qr_matrix_size = QR_MATRIX_SIZE(version.version);
 
-  write_patterns(qr_matrix,version.version,qr_matrix_size);
+  write_patterns(qr_matrix, version.version, qr_matrix_size);
 
   if (version.version >= MIN_VERSION_INFO_VERSION) {
     write_version_info(qr_matrix, version.version, qr_matrix_size);
@@ -86,5 +86,5 @@ int main(int argc, char **argv, char **envp) {
 
   uint32_t bmp_len = matrix_to_bmp(bmp, qr_matrix, qr_matrix_size);
 
-  syscall3(__NR_write,1,(long) bmp, bmp_len);
+  syscall3(__NR_write, 1, (long)bmp, bmp_len);
 }

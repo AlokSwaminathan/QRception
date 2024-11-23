@@ -1,14 +1,14 @@
-#include "types.h"
-#include "func_table.h"
 #include "constants.h"
+#include "func_table.h"
+#include "types.h"
 
 // Sizes stores the different sizes based on the length of the bits indicating the length of the data in that mode
 // 0 - Versions 1-9
 // 1 - Versions 10-26
 // 2 - Versions 27-40
 void get_mode_specific_size(uint16_t sizes[3], const enum Mode mode, const uint16_t len) {
-  #pragma GCC diagnostic push
-  #pragma GCC diagnostic ignored "-Wmaybe-uninitialized"
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wmaybe-uninitialized"
   const uint8_t *character_counts;
   uint16_t base_size = MODE_INDICATOR_LEN_BITS;
 
@@ -37,5 +37,5 @@ void get_mode_specific_size(uint16_t sizes[3], const enum Mode mode, const uint1
       sizes[i] += 1;
   }
 
-  #pragma GCC diagnostic pop
+#pragma GCC diagnostic pop
 }
