@@ -1,5 +1,6 @@
 #include "types.h"
 #include "func_table.h"
+
 uint8_t ascii_to_alphanumeric(uint8_t c) {
   if (c >= '0' && c <= '9')
     return c - '0';
@@ -48,7 +49,8 @@ enum Mode get_mode(uint8_t c) {
     return BYTE;
 }
 
-enum Mode get_worst_mode(uint8_t* data, uint16_t data_len) {
+// Goes through data and finds the mode that encomposses all of the data
+enum Mode get_worst_mode(const uint8_t data[MAX_DATA_CODEWORDS], const uint16_t data_len) {
   enum Mode mode = 0;
   for (uint16_t i = 0; i < data_len; i++) {
     mode |= get_mode(data[i]); 

@@ -1,7 +1,7 @@
 #ifndef CONSTANTS
 #define CONSTANTS
 
-#include "types.h"
+#include <stdint.h>
 
 // For simplicity this is calculated assuming max amount of bits for character count and mode
 // indicator
@@ -32,6 +32,8 @@
 // From QR Spec (2956) with some extra bytes since the bit insertion might write over
 #define MAX_DATA_CODEWORDS (2956+10)
 #define MAX_CODEWORDS (3706+10)
+#define MAX_CODEWORDS_BITS (MAX_CODEWORDS * 8)
+
 #define QR_MATRIX_PADDING (3)
 #define MAX_QR_MATRIX_SIZE (177 + 2*(QR_MATRIX_PADDING))
 
@@ -69,12 +71,15 @@ extern const uint8_t ALIGNMENT_PATTERN_DIFFS[NUM_VERSIONS];
 #define MAX_DEGREE_GENERATOR_POLYNOMIAL (MAX_ERROR_CODEWORDS)
 #define MAX_POLYNOMIAL_LEN (256)
 
-#define DATA_SIZE(version) (version * 4 + 21)
+// Calculates the QR matrix width for a 0-indexed version
+#define QR_MATRIX_SIZE(version) (version * 4 + 21)
 
+// Using these values since we want 0 to represent an uninitialized state for writing the actual data so we know which squares have been taken already
 #define QR_MATRIX_WHITE_VALUE (1)
 #define QR_MATRIX_BLACK_VALUE (3)
 #define QR_MATRIX_DEFAULT_VALUE (0)
 
+// This switches the value between 1 and 3
 #define REVERSE_QR_MATRIX_VAL(val) (((val) + 6) % 4)
 
 // 0 -> 1 -> white

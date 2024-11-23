@@ -39,15 +39,17 @@ int main(int argc, char **argv, char **envp) {
     syscall1(__NR_close, fd);
   }
 
-  // 3 different version splits where the mode sizes are different, so keeping those in mind is important to find the final size of the qr code bitstream
+  // 3 different version splits where the mode size lengths are different, so keeping those in mind is important to find the final size of the qr code bitstream
   uint16_t sizes[DISTINCT_CHARACTER_COUNT_SIZES];
-  enum Mode mode = get_worst_mode(qr_data,len);
+  const enum Mode mode = get_worst_mode(qr_data,len);
   
   get_mode_specific_size(sizes, mode, len);
 
-  enum ErrorCorrectionVersion err_ver = EC_LOW;
+  const enum ErrorCorrectionVersion err_ver = EC_LOW;
 
-  struct Version version = get_smallest_version(sizes,err_ver) ;
+  const struct Version version = get_smallest_version(sizes,err_ver) ;
+
+  // 255 is the return value if there is no valid version found
   if (version.version == 255) {
     return 1;
   }
@@ -55,9 +57,9 @@ int main(int argc, char **argv, char **envp) {
   uint8_t codewords[MAX_DATA_CODEWORDS];
   encode_into_codewords(qr_data, len, mode, version, codewords);
 
-  struct ErrData err = get_err_data(version);
+  const struct ErrData err = get_err_data(version);
 
-  uint8_t res_bits[MAX_CODEWORDS * 8];
+  uint8_t res_bits[MAX_CODEWORDS_BITS];
 
   // Write white bytes here so if the QR symbol has extra space white will be written
   for (uint16_t i = 0; i < sizeof(res_bits); i++) {
@@ -68,7 +70,7 @@ int main(int argc, char **argv, char **envp) {
 
   uint8_t qr_matrix[MAX_QR_MATRIX_SIZE][MAX_QR_MATRIX_SIZE] = {0};
   
-  uint8_t qr_matrix_size = DATA_SIZE(version.version);
+  uint8_t qr_matrix_size = QR_MATRIX_SIZE(version.version);
 
   write_patterns(qr_matrix,version.version,qr_matrix_size);
 

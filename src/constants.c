@@ -10,7 +10,7 @@ const uint8_t BYTE_CHARACTER_COUNT_LEN[3] = {8, 16, 16};
 // 1 is L
 // 2 is H
 // 3 is Q
-// This corresponds with their 2 bit representations and how they are shown in the enum
+// This corresponds with their 2 bit representations in format info and how they are shown in the enum
 // So that way you can index the subarray with the enum value
 // Values are additive, so the value for row 20 is the sum of all values from 0-20
 const uint8_t MAX_DATA_BITS[40][5] = {
@@ -61,8 +61,8 @@ const uint8_t MAX_DATA_BITS[40][5] = {
 // 1 is L
 // 2 is H
 // 3 is Q
-// This corresponds with their 2 bit representations and how they are shown in the enum
-// If that value evenly divides it will be only one, otherwise it will be that value with the one that is one greater than it
+// This corresponds with their 2 bit representations in format info and how they are shown in the enum
+// If this value evenly divides the total number of codewords then there is only one block, otherwise we need to find another block, but regardless we can extrapolate all the info form this one number per EC level and version pair
 const uint8_t ERR_CODEWORD_BLOCKS[40][4] = {
   {26, 26, 26, 26},
   {44, 44, 44, 44},
@@ -106,8 +106,10 @@ const uint8_t ERR_CODEWORD_BLOCKS[40][4] = {
   {75, 148, 45, 54},
 };
 
+// The constant differences between the coordinate possibilites for alignment pairs
+// There are always n constant differences and 1 other/same difference for n+2 total coordinate possibilites
 const uint8_t ALIGNMENT_PATTERN_DIFFS[NUM_VERSIONS] = {
-  // First couple are useless since only 2 coords, but probably more space to write code to accomodate that and shorten this array
+  // First couple are useless since only 2 alignment coords and we know the smaller one is 6, but probably more space to write code to accomodate that and shorten this array
   0,
   12,
   16,

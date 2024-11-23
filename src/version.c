@@ -1,7 +1,7 @@
 #include "constants.h"
 #include "types.h"
 
-static inline enum CharCountVersion get_cc_version(uint8_t version){
+static inline enum CharCountVersion get_cc_version(const uint8_t version){
   #pragma GCC diagnostic push
   #pragma GCC diagnostic ignored "-Wreturn-type"
   if (version >= 1 && version <= 9)
@@ -13,7 +13,7 @@ static inline enum CharCountVersion get_cc_version(uint8_t version){
 }
 #pragma GCC diagnostic pop
 
-struct Version get_smallest_version(uint16_t *sizes, enum ErrorCorrectionVersion ec) {
+struct Version get_smallest_version(const uint16_t sizes[3], const enum ErrorCorrectionVersion ec) {
   enum CharCountVersion cc_version;
   uint16_t curr_size = 0;
   uint16_t cw_capacity = 0;

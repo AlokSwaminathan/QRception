@@ -3,7 +3,7 @@
 #include "types.h"
 
 // Returns new curr bit
-uint16_t encode_bytes(uint8_t *data, uint16_t data_len, uint8_t *codewords, uint16_t curr_bit) {
+uint16_t encode_bytes(const uint8_t data[MAX_DATA_CODEWORDS], const uint16_t data_len, uint8_t codewords[MAX_DATA_CODEWORDS], uint16_t curr_bit) {
   for (uint16_t i = 0; i < data_len; i++){
     curr_bit += write_bits(codewords, curr_bit, (uint32_t) data[i], BYTE_LEN_BITS); 
   }
@@ -11,10 +11,10 @@ uint16_t encode_bytes(uint8_t *data, uint16_t data_len, uint8_t *codewords, uint
 }
 
 // Returns new curr bit
-uint16_t encode_alphanumeric(uint8_t *data, uint16_t data_len, uint8_t *codewords, uint16_t curr_bit) {
+uint16_t encode_alphanumeric(const uint8_t data[MAX_DATA_CODEWORDS], const uint16_t data_len, uint8_t codewords[MAX_DATA_CODEWORDS], uint16_t curr_bit) {
   uint16_t alph_data = 0;
   uint8_t bits = ALPHANUMERIC_ONE_LEN_BITS;
-  uint8_t incr = ALPHANUMERIC_TWO_LEN_BITS - ALPHANUMERIC_ONE_LEN_BITS;
+  const uint8_t incr = ALPHANUMERIC_TWO_LEN_BITS - ALPHANUMERIC_ONE_LEN_BITS;
   for (uint16_t i = 0; i < data_len; i++){
     alph_data = 45*alph_data + ascii_to_alphanumeric(data[i]);
     if (bits == ALPHANUMERIC_TWO_LEN_BITS) {
@@ -31,7 +31,7 @@ uint16_t encode_alphanumeric(uint8_t *data, uint16_t data_len, uint8_t *codeword
 }
 
 // Returns new curr bit
-uint16_t encode_numeric(uint8_t *data, uint16_t data_len, uint8_t *codewords, uint16_t curr_bit) {
+uint16_t encode_numeric(const uint8_t data[MAX_DATA_CODEWORDS], const uint16_t data_len, uint8_t codewords[MAX_DATA_CODEWORDS], uint16_t curr_bit) {
   uint16_t numeric_data = 0;
   uint8_t bits = NUMERIC_ONE_LEN_BITS;
   for (uint16_t i = 0; i < data_len; i++){
@@ -51,15 +51,14 @@ uint16_t encode_numeric(uint8_t *data, uint16_t data_len, uint8_t *codewords, ui
 
 // Expects codewords to be len 2956
 // Version should be 1-3 in this case, representing a character count version
-void encode_into_codewords(uint8_t *data, uint16_t data_len, enum Mode mode, struct Version version, uint8_t *codewords) {
+void encode_into_codewords(const uint8_t data[MAX_DATA_CODEWORDS], const uint16_t data_len, const enum Mode mode, const struct Version version, uint8_t codewords[MAX_DATA_CODEWORDS]) {
   // Current bit of codewords
   uint8_t extended_codewords[MAX_CODEWORDS * 8];
   uint16_t curr_bit = 0;
 
   #pragma GCC diagnostic push
   #pragma GCC diagnostic ignored "-Wmaybe-uninitialized"
-  
-  // Character count and mode indicator data
+
   uint8_t cc_len_bits;
   uint8_t mode_indicator;
   ModeEncoder encoder;
@@ -82,14 +81,19 @@ void encode_into_codewords(uint8_t *data, uint16_t data_len, enum Mode mode, str
   break;
   }
 
+  // Writes mandatory mode indicator and size
   curr_bit += write_bits(extended_codewords, curr_bit, (uint32_t) mode_indicator, MODE_INDICATOR_LEN_BITS);
   curr_bit += write_bits(extended_codewords, curr_bit, (uint32_t) data_len, cc_len_bits);
+
+  // Writes the actual data, encoded based on mode
   curr_bit = encoder(data, data_len, extended_codewords, curr_bit);
 
   #pragma GCC diagnostic pop 
 
+  // Write mandatory terminator
   curr_bit += write_bits(extended_codewords, curr_bit, TERMINATOR, MODE_INDICATOR_LEN_BITS);
 
+  // Extra bits to ensure everything is rounded to a byte
   curr_bit += write_bits(extended_codewords, curr_bit,0, 8);
 
   // Merge extended_codewords into normal one
@@ -101,6 +105,8 @@ void encode_into_codewords(uint8_t *data, uint16_t data_len, enum Mode mode, str
     }
     codewords[i] = byte;
   }
+
+  // If there is any extra space, write the padding bits
   for (; curr_bit < version.capacity; curr_bit += 2) {
     *(uint16_t*)(&codewords[curr_bit]) = 0b0001000111101100; 
   }
