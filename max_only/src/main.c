@@ -13,7 +13,6 @@
 #include "galois_field.c"
 #include "mode.c"
 #include "patterns.c"
-#include "segments.c"
 #include "syscalls.h"
 #include "types.h"
 #include "write_info.c"
@@ -40,9 +39,20 @@ int main(int argc, char **argv, char **envp) {
 
   const enum Mode mode = get_worst_mode(qr_data, len);
 
-  uint16_t size = get_mode_size(mode, len);
+  uint16_t max;
+  switch (mode) {
+  case NUM:
+    max = MAX_NUMERIC;
+    break;
+  case ALPH_NUM:
+    max = MAX_ALPHANUMERIC;
+    break;
+  case BYTE:
+    max = MAX_BYTES;
+    break;
+  }
 
-  if (size > MAX_DATA_CODEWORDS)
+  if (len > max)
     return 1;
 
   uint8_t codewords[MAX_DATA_CODEWORDS];

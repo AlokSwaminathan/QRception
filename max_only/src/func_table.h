@@ -30,9 +30,6 @@ int main(int argc, char **argv, char **envp);
 enum Mode get_worst_mode(const uint8_t data[MAX_DATA_CODEWORDS], const uint16_t data_len);
 uint8_t ascii_to_alphanumeric(uint8_t c);
 
-// segments.c
-uint16_t get_mode_size(const enum Mode mode, const uint16_t len);
-
 // symbols.c
 void write_patterns(uint8_t matrix[MAX_QR_MATRIX_SIZE][MAX_QR_MATRIX_SIZE]);
 
