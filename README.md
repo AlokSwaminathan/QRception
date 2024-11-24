@@ -2,7 +2,7 @@
 A QR code generator that can generate itself
 
 This QR code encodes the data of a QR code generating Linux x86-64 executable
-![QR Code generator (all codes are max size)](/max_only/qr_generator.bmp)
+![QR Code generator (all codes are max size)](/max_version_generator/qr_generator.bmp)
 
 
 ## Why
@@ -86,7 +86,7 @@ This also just stopped working eventually.
 
 `build/` - Stores build artifacts
 
-`max_only/` - Stores code for generator that only supports max version
+`max_version_generator/` - Stores code for generator that only supports max version (version 40)
 
 `src/` - C source code
 
