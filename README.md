@@ -1,5 +1,6 @@
 # QRception
 A QR code generator that can generate itself
+
 Created using [ISO standard](/iso_standard.pdf)
 
 This QR code encodes the data of a QR code generating Linux x86-64 executable
