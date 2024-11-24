@@ -1,9 +1,7 @@
 # QRception
 A QR code generator that can generate itself
 
-Created using [ISO standard](/iso_standard.pdf)
-
-### Please leave issues, they can be about program functionality or improving the overall structure of the program
+Created using the third edition of the QR ISO Standard (ISO/IEC 18004)
 
 This QR code encodes the data of a QR code generating Linux x86-64 executable
 ![QR Code generator (all codes are max size)](/max_version_generator/qr_generator.bmp)
@@ -46,7 +44,7 @@ There are two versions, the normal version is a typical QR code generator, the m
 | Fits into QR Code | ❌ (4821 bytes) | ✅ (2903 bytes) |
 
 
-## Contributing - Help shrink either version, or add more features if space allows
+## Contributing
 If you are changing the source code, make sure the tests run. Even if all 40 versions work successfully, use `compare_qr_matrix.py` at least once and make sure it returns 0.
 
 If you are changing tests, just make sure they run properly on the existing executable. Update requirements.txt if you are adding any python libraries.
