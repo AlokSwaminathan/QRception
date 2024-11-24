@@ -60,10 +60,15 @@ dq 0
 dq file_load_va
 ; The "phyiscal address". Don't think it's used, set to same as VA.
 dq file_load_va
-; The size of the segment in the file. It ends at the string table.
-dq file_end
+
+%ifndef FILE_SIZE
+  %define FILE_SIZE 0x00
+%endif
+
+; Size of segment, which wil be dynamically calculated in the Makefile and replace this value and the following one
+dq FILE_SIZE
 ; The size of the segment in memory.
-dq file_end
+dq FILE_SIZE
 ; The alignment of the segment
 dq 0x200000
 
@@ -72,9 +77,9 @@ _start:
   mov rdi, [rsp]
   lea rsi, [rsp + 8]
   lea rdx, [rsp + 8*(rdi + 2)]
-  call entry_point
+  call main
   mov rdi, rax
   mov rax, 60
   syscall
 
-file_end:
+main:
