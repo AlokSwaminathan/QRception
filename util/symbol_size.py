@@ -1,34 +1,61 @@
 import argparse
-import re
+import os
+import subprocess
 
-SYMBOL_RE = r"([0-9a-fA-F]+)\s\w\s(\w+)\n"
+SYMBOL_SIZE_COMMAND = ["nm", "-n", "--print-size"]
 
 
 def parse_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument("symbol_table", type=str)
-    parser.add_argument("--file-size", type=int, required=True)
+    parser.add_argument(
+        "object_file",
+        type=str,
+        help="Object file with symbol table data",
+    )
     args = parser.parse_args()
-    return (args.symbol_table, args.file_size)
+    obj_file = args.object_file
+
+    if not os.path.exists(obj_file):
+        print(f'File "{obj_file}" doesn\'t exist')
+        exit(1)
+
+    return obj_file
 
 
-def get_symbol_locs(symbol_table):
-    matches = re.findall(SYMBOL_RE, symbol_table)
-    matches = [(int(m1, 16), m2) for m1, m2 in matches]
-    return matches
+def get_symbol_table(object_file):
+    symbol_process = subprocess.run(
+        SYMBOL_SIZE_COMMAND + [object_file], capture_output=True, text=True
+    )
+
+    return symbol_process.stdout
 
 
-def print_symbol_sizes(locs, file_size):
-    locs.append((file_size, ""))
-    for i, (loc, name) in enumerate(locs[:-1]):
-        diff = locs[i + 1][0] - loc
-        print(f"{name}: {diff} byte{'s' if diff != 1 else ''}")
+def print_symbol_sizes(symbol_table: str):
+
+    def get_size(s):
+        return int(s.split(" ")[1])
+
+    res_lines = []
+
+    for line in symbol_table.split("\n"):
+        if not line:
+            continue
+        line_data = line.split(" ")
+        name = line_data[-1]
+        size = int(line_data[1], base=16)
+        res_lines.append(
+            f"{name}: {size} ({'0x{:0x}'.format(size)}) byte{'s' if size != 1 else ''}"
+        )
+
+    res_lines.sort(key=get_size)
+
+    print("\n".join(res_lines))
 
 
 def main():
-    symbol_table, file_size = parse_args()
-    locs = get_symbol_locs(symbol_table)
-    print_symbol_sizes(locs, file_size)
+    object_file = parse_args()
+    symbol_table = get_symbol_table(object_file)
+    print_symbol_sizes(symbol_table)
 
 
 if __name__ == "__main__":
