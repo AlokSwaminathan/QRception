@@ -1,5 +1,6 @@
 # QRception
 A QR code generator that can generate itself
+Created using [ISO standard](/iso_standard.pdf)
 
 This QR code encodes the data of a QR code generating Linux x86-64 executable
 ![QR Code generator (all codes are max size)](/max_version_generator/qr_generator.bmp)
@@ -15,7 +16,7 @@ Pass in data directly - `./qr_generator "<data>"`
 
 Pass in data through a file -`./qr_generator "" "<file_path>"`
 
-Output is a `.bmp` file to stdout, pipe it where you see fit
+Output is a bitmap file to stdout, pipe it where you see fit
 
 
 ## Goals
