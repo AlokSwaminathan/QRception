@@ -4,6 +4,11 @@ A QR code generator that can generate itself
 This QR code encodes the data of a QR code generating Linux x86-64 executable
 ![QR Code generator (all codes are max size)](/max_only/qr_generator.bmp)
 
+
+## Why
+Why not?
+
+
 ## How to use
 
 Pass in data directly - `./qr_generator "<data>"`
