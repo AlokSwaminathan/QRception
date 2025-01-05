@@ -200,4 +200,7 @@
 
 extern const uint8_t RS_GEN_POLY[ERR_LEN + 1];
 
+// String to print if data is too large
+extern const char TOO_LARGE_ERROR[30];
+
 #endif
