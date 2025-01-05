@@ -41,7 +41,7 @@ There are two versions, the normal version is a typical QR code generator, the m
 | Supports all error correction levels | ❌(Only Low) | ❌(Only Low) |
 | Supports all 3 encoding types | ✅ | ✅ |
 | Produces QR Code w/ no errors | ✅ | ✅ |
-| Fits into QR Code | ❌ (4821 bytes) | ✅ (2903 bytes) |
+| Fits into QR Code | ❌ (4872 bytes) | ✅ (2953 bytes) |
 
 
 ## Contributing
