@@ -51,6 +51,7 @@ int main(int argc, char **argv) {
 
   // 255 is the return value if there is no valid version found
   if (version.version == 255) {
+    syscall3(__NR_write, 2, (long)TOO_LARGE_ERROR, sizeof(TOO_LARGE_ERROR));
     return 1;
   }
 

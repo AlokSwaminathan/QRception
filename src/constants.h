@@ -174,4 +174,7 @@ extern const uint8_t ALIGNMENT_PATTERN_DIFFS[NUM_VERSIONS];
 #define BMP_VERTICAL_RES_OFFSET (42)
 #define BMP_WHITE_COLOR_OFFSET (58)
 
+// String to print if data is too large
+extern const char TOO_LARGE_ERROR[30];
+
 #endif

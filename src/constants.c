@@ -153,3 +153,6 @@ const uint8_t ALIGNMENT_PATTERN_DIFFS[NUM_VERSIONS] = {
   28,
   28
 };
+
+// Sized to avoid null terminator
+const char TOO_LARGE_ERROR[30] = "Data too large for any QR Code";

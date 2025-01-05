@@ -56,7 +56,7 @@ int main(int argc, char **argv) {
   }
 
   if (len > max){
-    syscall3(__NR_write, 1, (long)TOO_LARGE_ERROR, sizeof(TOO_LARGE_ERROR));
+    syscall3(__NR_write, 2, (long)TOO_LARGE_ERROR, sizeof(TOO_LARGE_ERROR));
     return 1;
   }
 
