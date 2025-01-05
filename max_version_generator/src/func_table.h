@@ -24,7 +24,7 @@ uint8_t gf_mul(uint8_t a, uint8_t b);
 void gf_poly_div(uint8_t res[MAX_POLYNOMIAL_LEN], const uint8_t *dividend, const uint8_t dividend_len, const uint8_t *divisor, const uint8_t divisor_len);
 
 // main.c
-int main(int argc, char **argv, char **envp);
+int main(int argc, char **argv);
 
 // mode.c
 enum Mode get_worst_mode(const uint8_t data[MAX_DATA_CODEWORDS], const uint16_t data_len);

@@ -3,5 +3,5 @@ build/
 *.o
 *.out
 qr_generator
-tests/*tmp*
+*tmp*
 */__pycache__

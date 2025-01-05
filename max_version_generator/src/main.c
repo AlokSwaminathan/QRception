@@ -17,7 +17,7 @@
 #include "types.h"
 #include "write_info.c"
 
-int main(int argc, char **argv, char **envp) {
+int main(int argc, char **argv) {
   uint8_t qr_data[MAX_DATA_CODEWORDS];
   uint16_t len = 0;
 
