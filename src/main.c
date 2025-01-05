@@ -1,6 +1,7 @@
 // Looks like including the .c file directly so gcc can make one .S file is more effective than merging separate ones
 // merge_asm still works even though it isnt merging anything anymore
 #include <asm/unistd_64.h>
+#include <unistd.h>
 #include <fcntl.h>
 
 #include "bits.c"
@@ -51,7 +52,7 @@ int main(int argc, char **argv) {
 
   // 255 is the return value if there is no valid version found
   if (version.version == 255) {
-    syscall3(__NR_write, 2, (long)TOO_LARGE_ERROR, sizeof(TOO_LARGE_ERROR));
+    syscall3(__NR_write, STDERR_FILENO, (long)TOO_LARGE_ERROR, sizeof(TOO_LARGE_ERROR));
     return 1;
   }
 
@@ -87,5 +88,5 @@ int main(int argc, char **argv) {
 
   uint32_t bmp_len = matrix_to_bmp(bmp, qr_matrix, qr_matrix_size);
 
-  syscall3(__NR_write, 1, (long)bmp, bmp_len);
+  syscall3(__NR_write, STDOUT_FILENO, (long)bmp, bmp_len);
 }
