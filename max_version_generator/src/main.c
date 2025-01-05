@@ -39,6 +39,9 @@ int main(int argc, char **argv) {
 
   const enum Mode mode = get_worst_mode(qr_data, len);
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wmaybe-uninitialized"
+
   uint16_t max;
   switch (mode) {
   case NUM:
@@ -54,6 +57,8 @@ int main(int argc, char **argv) {
 
   if (len > max)
     return 1;
+
+#pragma GCC diagnostic pop
 
   uint8_t codewords[MAX_DATA_CODEWORDS];
   encode_into_codewords(qr_data, len, mode, codewords);
@@ -74,8 +79,6 @@ int main(int argc, char **argv) {
   // return 0;
 
   uint8_t qr_matrix[MAX_QR_MATRIX_SIZE][MAX_QR_MATRIX_SIZE] = {0};
-
-  uint8_t qr_matrix_size = QR_MATRIX_SIZE(VERSION);
 
   write_patterns(qr_matrix);
 
