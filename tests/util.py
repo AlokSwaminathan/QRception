@@ -38,7 +38,7 @@ def get_encoding(data):
 
 def print_data_diffs(data, segno_data, forced_bytes=[]):
     diffs = 0
-    bad_bytes = forced_bytes
+    bad_bytes = []
     for i in range(min(len(data), len(segno_data))):
         a, b = data[i], segno_data[i]
         if a != b:
@@ -50,6 +50,10 @@ def print_data_diffs(data, segno_data, forced_bytes=[]):
         b1 = "".join([str(b) for b in data[byte * 8 : (byte + 1) * 8]])
         b2 = "".join([str(b) for b in segno_data[byte * 8 : (byte + 1) * 8]])
         print(f"Byte {byte}: program: {b1}, segno: {b2}")
+    for byte in forced_bytes:
+        b1 = "".join([str(b) for b in data[byte * 8 : (byte + 1) * 8]])
+        b2 = "".join([str(b) for b in segno_data[byte * 8 : (byte + 1) * 8]])
+        print(f"FORCED BYTE DIFF: Byte {byte}: program: {b1}, segno: {b2}")
     print(f"{diffs} total differences in bits")
     print(f"{len(bad_bytes)} total differences in bytes")
     print(f"Program generated length: {len(data)}")
